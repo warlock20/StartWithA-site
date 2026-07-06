@@ -83,49 +83,18 @@ const HOME_FONTS = {
   mono: "'JetBrains Mono', monospace",
 };
 
-const HOME_THEMES = {
-  warm: {
-    name: 'The Ledger',
-    heroBg: '#faf7f2', sectionBg: '#faf7f2', sectionAltBg: '#f0ece4',
-    navBg: 'rgba(250,247,242,0.92)', ctaBg: '#1a1814', footerBg: '#1a1814',
-    heroText: '#1a1814', heroMuted: '#5c574d',
-    textPrimary: '#1a1814', textSecondary: '#5c574d', textFaint: '#8a8477',
-    accent: '#2d6a4f', accentLight: '#40916c',
-    accentSoft: 'rgba(45,106,79,0.07)', accentText: '#fff',
-    cardBg: '#ffffff', cardBorder: '#e0d9cd', cardBorderHover: '#2d6a4f',
-    quoteBg: 'rgba(45,106,79,0.04)', quoteBorder: '#2d6a4f',
-    mockupBg: '#fff', mockupBorder: '#e0d9cd',
-    philosophyBg: '#1a1814', philosophyText: 'rgba(255,255,255,0.88)', philosophyMuted: 'rgba(255,255,255,0.45)',
-    stepNumBg: 'rgba(45,106,79,0.1)',
-  },
-  dark: {
-    name: 'After Hours',
-    heroBg: '#0c1017', sectionBg: '#0c1017', sectionAltBg: '#111822',
-    navBg: 'rgba(12,16,23,0.92)', ctaBg: '#080b10', footerBg: '#080b10',
-    heroText: '#e8ecf1', heroMuted: 'rgba(200,215,230,0.6)',
-    textPrimary: '#e2e8f0', textSecondary: 'rgba(200,215,230,0.55)', textFaint: 'rgba(200,215,230,0.35)',
-    accent: '#3ecf8e', accentLight: '#5ee0a8',
-    accentSoft: 'rgba(62,207,142,0.08)', accentText: '#0c1017',
-    cardBg: 'rgba(255,255,255,0.03)', cardBorder: 'rgba(255,255,255,0.07)', cardBorderHover: '#3ecf8e',
-    quoteBg: 'rgba(62,207,142,0.04)', quoteBorder: '#3ecf8e',
-    mockupBg: '#141c28', mockupBorder: 'rgba(255,255,255,0.07)',
-    philosophyBg: 'rgba(62,207,142,0.04)', philosophyText: 'rgba(255,255,255,0.85)', philosophyMuted: 'rgba(255,255,255,0.4)',
-    stepNumBg: 'rgba(62,207,142,0.12)',
-  },
-  clean: {
-    name: 'Clean',
-    heroBg: '#ffffff', sectionBg: '#ffffff', sectionAltBg: '#f7f9f8',
-    navBg: 'rgba(255,255,255,0.92)', ctaBg: '#0f172a', footerBg: '#0f172a',
-    heroText: '#0f172a', heroMuted: '#475569',
-    textPrimary: '#0f172a', textSecondary: '#475569', textFaint: '#94a3b8',
-    accent: '#2d6a4f', accentLight: '#40916c',
-    accentSoft: 'rgba(45,106,79,0.05)', accentText: '#fff',
-    cardBg: '#ffffff', cardBorder: '#e2e8f0', cardBorderHover: '#2d6a4f',
-    quoteBg: 'rgba(45,106,79,0.03)', quoteBorder: '#2d6a4f',
-    mockupBg: '#fff', mockupBorder: '#e2e8f0',
-    philosophyBg: '#f0fdf4', philosophyText: '#1b4332', philosophyMuted: '#40916c',
-    stepNumBg: 'rgba(45,106,79,0.08)',
-  },
+const HOME_THEME = {
+  heroBg: '#ffffff', sectionBg: '#ffffff', sectionAltBg: '#f7f9f8',
+  navBg: 'rgba(255,255,255,0.92)', ctaBg: '#0f172a', footerBg: '#0f172a',
+  heroText: '#0f172a', heroMuted: '#475569',
+  textPrimary: '#0f172a', textSecondary: '#475569', textFaint: '#94a3b8',
+  accent: '#2d6a4f', accentLight: '#40916c',
+  accentSoft: 'rgba(45,106,79,0.05)', accentText: '#fff',
+  cardBg: '#ffffff', cardBorder: '#e2e8f0', cardBorderHover: '#2d6a4f',
+  quoteBg: 'rgba(45,106,79,0.03)', quoteBorder: '#2d6a4f',
+  mockupBg: '#fff', mockupBorder: '#e2e8f0',
+  philosophyBg: '#f0fdf4', philosophyText: '#1b4332', philosophyMuted: '#40916c',
+  stepNumBg: 'rgba(45,106,79,0.08)',
 };
 
 /* ── REVEAL ANIMATION ─── */
@@ -180,7 +149,6 @@ function HomeReveal({ children, delay, style }) {
 function OssNav({ t }) {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const isDark = t === HOME_THEMES.dark;
 
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 40);
@@ -289,17 +257,11 @@ function OssNav({ t }) {
    HERO
    ═══════════════════════════════════════════════════════════ */
 function OssHero({ t }) {
-  const isDark = t === HOME_THEMES.dark;
   return (
     <section className="hero-section" style={{
       background: t.heroBg, minHeight: '100vh', display: 'flex', alignItems: 'center',
       justifyContent: 'center', padding: '6rem 2rem 5rem', position: 'relative',
     }}>
-      {isDark && <div style={{
-        position: 'absolute', inset: 0, opacity: 0.025,
-        backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)',
-        backgroundSize: '28px 28px',
-      }}></div>}
       <div style={{ maxWidth: 720, textAlign: 'center', position: 'relative', zIndex: 1 }}>
         <HomeReveal>
           <p style={{
@@ -348,7 +310,7 @@ function OssHero({ t }) {
         <HomeReveal delay={0.32}>
           <div style={{
             display: 'flex', gap: '1.5rem', justifyContent: 'center', marginTop: '2rem',
-            fontSize: '0.8rem', color: isDark ? 'rgba(200,215,230,0.35)' : '#9ca3af',
+            fontSize: '0.8rem', color: '#9ca3af',
             fontFamily: HOME_FONTS.body, fontWeight: 500, flexWrap: 'wrap',
           }}>
             <span>AGPL-3.0 Licensed</span>
@@ -367,7 +329,6 @@ function OssHero({ t }) {
    PHILOSOPHY STRIP
    ═══════════════════════════════════════════════════════════ */
 function OssPhilosophy({ t }) {
-  const isDark = t.philosophyBg.startsWith('#1') || t.philosophyBg.startsWith('rgba(6');
   const items = [
     { icon: 'bi-x-circle', text: 'Not a stock screener' },
     { icon: 'bi-x-circle', text: 'Not AI-generated stock picks' },
@@ -376,8 +337,8 @@ function OssPhilosophy({ t }) {
   return (
     <section style={{
       background: t.philosophyBg, padding: '2rem 2rem',
-      borderTop: isDark ? 'none' : `1px solid ${t.cardBorder}`,
-      borderBottom: isDark ? 'none' : `1px solid ${t.cardBorder}`,
+      borderTop: `1px solid ${t.cardBorder}`,
+      borderBottom: `1px solid ${t.cardBorder}`,
     }}>
       <div className="philosophy-grid" style={{
         maxWidth: 860, margin: '0 auto', display: 'grid',
@@ -403,13 +364,7 @@ function OssPhilosophy({ t }) {
 /* ── SWEEP MOCKUP ───────────────────── */
 function SweepMockup({ t }) {
   const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
-  const isDark = t === HOME_THEMES.dark;
-  const app = isDark ? {
-    bg: '#141c28', border: 'rgba(255,255,255,0.06)', text: '#e2e8f0',
-    muted: 'rgba(200,215,230,0.55)', faint: 'rgba(200,215,230,0.3)',
-    cardBg: 'rgba(255,255,255,0.04)', softGreen: 'rgba(62,207,142,0.08)',
-    softGreenBorder: 'rgba(62,207,142,0.15)', accent: '#3ecf8e',
-  } : {
+  const app = {
     bg: '#fff', border: '#e5e7eb', text: '#111827',
     muted: '#6b7280', faint: '#9ca3af',
     cardBg: '#fff', softGreen: '#f0fdf4',
@@ -420,9 +375,7 @@ function SweepMockup({ t }) {
     <div style={{
       background: app.bg, border: `1px solid ${t.mockupBorder}`, borderRadius: 16,
       overflow: 'hidden',
-      boxShadow: isDark
-        ? '0 24px 64px rgba(0,0,0,0.5), 0 4px 16px rgba(0,0,0,0.3)'
-        : '0 24px 64px rgba(0,0,0,0.1), 0 4px 16px rgba(0,0,0,0.05)',
+      boxShadow: '0 24px 64px rgba(0,0,0,0.1), 0 4px 16px rgba(0,0,0,0.05)',
       maxWidth: 820, margin: '0 auto',
     }}>
       <div style={{
@@ -431,7 +384,7 @@ function SweepMockup({ t }) {
       }}>
         <div style={{ display: 'flex', gap: 6 }}>
           {['#ff5f57','#febd2e','#28c840'].map(c => (
-            <div key={c} style={{ width: 10, height: 10, borderRadius: '50%', background: c, opacity: isDark ? 0.8 : 1 }}></div>
+            <div key={c} style={{ width: 10, height: 10, borderRadius: '50%', background: c }}></div>
           ))}
         </div>
         <div style={{ flex: 1, textAlign: 'center', fontSize: 11, color: app.faint, fontFamily: HOME_FONTS.body }}>
@@ -465,7 +418,7 @@ function SweepMockup({ t }) {
               <div key={l} style={{
                 width: 26, height: 26, borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center',
                 fontSize: 10, fontWeight: 700, fontFamily: HOME_FONTS.mono,
-                background: status === 'done' ? app.accent : status === 'active' ? app.softGreen : (isDark ? 'rgba(255,255,255,0.04)' : '#f3f4f6'),
+                background: status === 'done' ? app.accent : status === 'active' ? app.softGreen : '#f3f4f6',
                 color: status === 'done' ? '#fff' : status === 'active' ? app.accent : app.faint,
                 border: status === 'active' ? `1.5px dashed ${app.accent}` : '1.5px solid transparent',
               }}>{l}</div>
@@ -541,16 +494,7 @@ function SweepMockup({ t }) {
 
 /* ── CHECKLIST MOCKUP ───────────────── */
 function ChecklistMockup({ t }) {
-  const isDark = t === HOME_THEMES.dark;
-  const app = isDark ? {
-    bg: '#141c28', border: 'rgba(255,255,255,0.06)', text: '#e2e8f0',
-    muted: 'rgba(200,215,230,0.55)', faint: 'rgba(200,215,230,0.3)',
-    cardBg: 'rgba(255,255,255,0.04)', softGreen: 'rgba(62,207,142,0.08)',
-    softGreenBorder: 'rgba(62,207,142,0.15)', accent: '#3ecf8e',
-    softRed: 'rgba(239,68,68,0.08)', softRedBorder: 'rgba(239,68,68,0.15)',
-    softAmber: 'rgba(245,158,11,0.08)', softAmberBorder: 'rgba(245,158,11,0.15)',
-    stepDone: '#3ecf8e', stepActive: '#3ecf8e',
-  } : {
+  const app = {
     bg: '#fff', border: '#e5e7eb', text: '#111827',
     muted: '#6b7280', faint: '#9ca3af',
     cardBg: '#fff', softGreen: '#f0fdf4',
@@ -561,15 +505,15 @@ function ChecklistMockup({ t }) {
   };
   return (
     <div style={{
-      background: app.bg, border: `1px solid ${isDark ? app.border : '#e5e7eb'}`, borderRadius: 16,
+      background: app.bg, border: '1px solid #e5e7eb', borderRadius: 16,
       overflow: 'hidden',
-      boxShadow: isDark ? '0 24px 64px rgba(0,0,0,0.5)' : '0 24px 64px rgba(0,0,0,0.1)',
+      boxShadow: '0 24px 64px rgba(0,0,0,0.1)',
       maxWidth: 820, margin: '0 auto',
     }}>
       <div style={{ padding: '10px 16px', borderBottom: `1px solid ${app.border}`, display: 'flex', alignItems: 'center', gap: 8 }}>
         <div style={{ display: 'flex', gap: 6 }}>
           {['#ff5f57','#febd2e','#28c840'].map(c => (
-            <div key={c} style={{ width: 10, height: 10, borderRadius: '50%', background: c, opacity: isDark ? 0.8 : 1 }}></div>
+            <div key={c} style={{ width: 10, height: 10, borderRadius: '50%', background: c }}></div>
           ))}
         </div>
         <div style={{ flex: 1, textAlign: 'center', fontSize: 11, color: app.faint, fontFamily: HOME_FONTS.body }}>
@@ -616,12 +560,12 @@ function ChecklistMockup({ t }) {
                 </div>
               )}
               {step.status === 'active' && (
-                <button style={{ fontSize: 11, padding: '5px 12px', borderRadius: 6, border: 'none', background: app.accent, color: isDark ? '#0c1017' : '#fff', fontWeight: 600, cursor: 'default' }}>Continue →</button>
+                <button style={{ fontSize: 11, padding: '5px 12px', borderRadius: 6, border: 'none', background: app.accent, color: '#fff', fontWeight: 600, cursor: 'default' }}>Continue →</button>
               )}
             </div>
           ))}
         </div>
-        <div className="mockup-sidebar" style={{ width: 210, borderLeft: `1px solid ${app.border}`, padding: '16px 14px', background: isDark ? 'rgba(255,255,255,0.01)' : '#fafbfc' }}>
+        <div className="mockup-sidebar" style={{ width: 210, borderLeft: `1px solid ${app.border}`, padding: '16px 14px', background: '#fafbfc' }}>
           <div style={{ fontSize: 12, fontWeight: 700, color: app.text, marginBottom: 10 }}>Project Vitals</div>
           {[
             { label: 'Status', value: 'In Progress', color: '#3b82f6' },
@@ -667,15 +611,7 @@ function ChecklistMockup({ t }) {
 
 /* ── KNOWLEDGE HUB MOCKUP ───────────── */
 function KnowledgeMockup({ t }) {
-  const isDark = t === HOME_THEMES.dark;
-  const app = isDark ? {
-    bg: '#141c28', border: 'rgba(255,255,255,0.06)', text: '#e2e8f0',
-    muted: 'rgba(200,215,230,0.55)', faint: 'rgba(200,215,230,0.3)',
-    cardBg: 'rgba(255,255,255,0.04)', accent: '#3ecf8e',
-    tabActive: '#3ecf8e', tabActiveBg: 'rgba(62,207,142,0.12)',
-    noteBg: 'rgba(255,255,255,0.03)', noteHeader: 'rgba(62,207,142,0.08)',
-    noteHeaderBorder: 'rgba(62,207,142,0.12)',
-  } : {
+  const app = {
     bg: '#fff', border: '#e5e7eb', text: '#111827',
     muted: '#6b7280', faint: '#9ca3af',
     cardBg: '#fff', accent: '#2d6a4f',
@@ -685,15 +621,15 @@ function KnowledgeMockup({ t }) {
   };
   return (
     <div style={{
-      background: app.bg, border: `1px solid ${isDark ? app.border : '#e5e7eb'}`, borderRadius: 16,
+      background: app.bg, border: '1px solid #e5e7eb', borderRadius: 16,
       overflow: 'hidden',
-      boxShadow: isDark ? '0 24px 64px rgba(0,0,0,0.5)' : '0 24px 64px rgba(0,0,0,0.1)',
+      boxShadow: '0 24px 64px rgba(0,0,0,0.1)',
       maxWidth: 820, margin: '0 auto',
     }}>
       <div style={{ padding: '10px 16px', borderBottom: `1px solid ${app.border}`, display: 'flex', alignItems: 'center', gap: 8 }}>
         <div style={{ display: 'flex', gap: 6 }}>
           {['#ff5f57','#febd2e','#28c840'].map(c => (
-            <div key={c} style={{ width: 10, height: 10, borderRadius: '50%', background: c, opacity: isDark ? 0.8 : 1 }}></div>
+            <div key={c} style={{ width: 10, height: 10, borderRadius: '50%', background: c }}></div>
           ))}
         </div>
         <div style={{ flex: 1, textAlign: 'center', fontSize: 11, color: app.faint, fontFamily: HOME_FONTS.body }}>
@@ -706,7 +642,7 @@ function KnowledgeMockup({ t }) {
             <div style={{ fontFamily: HOME_FONTS.heading, fontWeight: 700, fontSize: 16, color: app.text }}>Knowledge Hub</div>
             <div style={{ fontSize: 11, color: app.muted }}>Your research notes and curated wisdom</div>
           </div>
-          <button style={{ fontSize: 11, padding: '6px 14px', borderRadius: 7, border: 'none', background: isDark ? app.accent : '#1e293b', color: isDark ? '#0c1017' : '#fff', fontWeight: 600, cursor: 'default', display: 'flex', alignItems: 'center', gap: 4 }}>
+          <button style={{ fontSize: 11, padding: '6px 14px', borderRadius: 7, border: 'none', background: '#1e293b', color: '#fff', fontWeight: 600, cursor: 'default', display: 'flex', alignItems: 'center', gap: 4 }}>
             <span style={{ fontSize: 12 }}>+</span> Create New Entry
           </button>
         </div>
@@ -726,7 +662,7 @@ function KnowledgeMockup({ t }) {
               {tab.label}
               <span style={{
                 fontSize: 9, padding: '1px 5px', borderRadius: 8, fontWeight: 600,
-                background: tab.active ? (isDark ? 'rgba(62,207,142,0.2)' : 'rgba(255,255,255,0.2)') : app.border,
+                background: tab.active ? 'rgba(255,255,255,0.2)' : app.border,
                 color: tab.active ? app.tabActive : app.faint,
               }}>{tab.count}</span>
             </div>
@@ -763,8 +699,8 @@ function KnowledgeMockup({ t }) {
                     borderRadius: 8, border: `1px solid ${app.border}`, overflow: 'hidden',
                     background: app.noteBg,
                   }}>
-                    <div style={{ padding: '4px 10px', background: app.noteHeader, borderBottom: `1px solid ${isDark ? app.noteHeaderBorder : '#e0e7ff'}` }}>
-                      <span style={{ fontSize: 9, fontWeight: 600, color: isDark ? app.accent : '#4f46e5' }}>RESEARCH NOTE</span>
+                    <div style={{ padding: '4px 10px', background: app.noteHeader, borderBottom: '1px solid #e0e7ff' }}>
+                      <span style={{ fontSize: 9, fontWeight: 600, color: '#4f46e5' }}>RESEARCH NOTE</span>
                     </div>
                     <div style={{ padding: '10px' }}>
                       <div style={{ fontSize: 12, fontWeight: 700, color: app.text, marginBottom: 2 }}>{note.title}</div>
@@ -774,8 +710,8 @@ function KnowledgeMockup({ t }) {
                         {note.tags.map((tag, ti) => (
                           <span key={ti} style={{
                             fontSize: 8, padding: '1px 5px', borderRadius: 3,
-                            background: ti === 0 ? (isDark ? 'rgba(62,207,142,0.1)' : '#eff6ff') : (isDark ? 'rgba(255,255,255,0.04)' : '#f1f5f9'),
-                            color: ti === 0 ? (isDark ? app.accent : '#2563eb') : app.muted,
+                            background: ti === 0 ? '#eff6ff' : '#f1f5f9',
+                            color: ti === 0 ? '#2563eb' : app.muted,
                             fontWeight: 500,
                           }}>{tag}</span>
                         ))}
@@ -795,17 +731,7 @@ function KnowledgeMockup({ t }) {
 
 /* ── ARGOS AI MOCKUP ────────────────── */
 function ArgosMockup({ t }) {
-  const isDark = t === HOME_THEMES.dark;
-  const app = isDark ? {
-    bg: '#141c28', border: 'rgba(255,255,255,0.06)', text: '#e2e8f0',
-    muted: 'rgba(200,215,230,0.55)', faint: 'rgba(200,215,230,0.3)',
-    cardBg: 'rgba(255,255,255,0.04)', accent: '#3ecf8e',
-    aiBg: 'rgba(62,207,142,0.04)', aiBorder: 'rgba(62,207,142,0.12)',
-    warnBg: 'rgba(245,158,11,0.06)', warnBorder: 'rgba(245,158,11,0.15)',
-    infoBg: 'rgba(59,130,246,0.06)', infoBorder: 'rgba(59,130,246,0.15)',
-    successBg: 'rgba(62,207,142,0.06)', successBorder: 'rgba(62,207,142,0.12)',
-    dangerBg: 'rgba(239,68,68,0.06)', dangerBorder: 'rgba(239,68,68,0.12)',
-  } : {
+  const app = {
     bg: '#fff', border: '#e5e7eb', text: '#111827',
     muted: '#6b7280', faint: '#9ca3af',
     cardBg: '#fff', accent: '#2d6a4f',
@@ -846,21 +772,21 @@ function ArgosMockup({ t }) {
   const typeColors = {
     warn: { bg: app.warnBg, border: app.warnBorder, accent: '#d97706' },
     info: { bg: app.infoBg, border: app.infoBorder, accent: '#2563eb' },
-    success: { bg: app.successBg, border: app.successBorder, accent: isDark ? '#3ecf8e' : '#059669' },
+    success: { bg: app.successBg, border: app.successBorder, accent: '#059669' },
     danger: { bg: app.dangerBg, border: app.dangerBorder, accent: '#dc2626' },
   };
 
   return (
     <div style={{
-      background: app.bg, border: `1px solid ${isDark ? app.border : '#e5e7eb'}`, borderRadius: 16,
+      background: app.bg, border: '1px solid #e5e7eb', borderRadius: 16,
       overflow: 'hidden',
-      boxShadow: isDark ? '0 24px 64px rgba(0,0,0,0.5)' : '0 24px 64px rgba(0,0,0,0.1)',
+      boxShadow: '0 24px 64px rgba(0,0,0,0.1)',
       maxWidth: 820, margin: '0 auto',
     }}>
       <div style={{ padding: '10px 16px', borderBottom: `1px solid ${app.border}`, display: 'flex', alignItems: 'center', gap: 8 }}>
         <div style={{ display: 'flex', gap: 6 }}>
           {['#ff5f57','#febd2e','#28c840'].map(c => (
-            <div key={c} style={{ width: 10, height: 10, borderRadius: '50%', background: c, opacity: isDark ? 0.8 : 1 }}></div>
+            <div key={c} style={{ width: 10, height: 10, borderRadius: '50%', background: c }}></div>
           ))}
         </div>
         <div style={{ flex: 1, textAlign: 'center', fontSize: 11, color: app.faint, fontFamily: HOME_FONTS.body }}>
@@ -918,8 +844,6 @@ function HomePreview({ t }) {
     { id: 'argos', label: 'Argos — AI Assistant', icon: '🛡️', desc: 'Your personal research assistant — surfaces insights from your data, warns you, helps you improve' },
     { id: 'knowledge', label: 'Knowledge Hub', icon: '📚', desc: 'Your research notes, curated wisdom, and decision journal' },
   ];
-  const isDark = t === HOME_THEMES.dark;
-
   return (
     <section className="section-pad" style={{ background: t.sectionBg, padding: '5rem 2rem', overflow: 'hidden' }}>
       <div style={{ maxWidth: 920, margin: '0 auto' }}>
@@ -947,7 +871,7 @@ function HomePreview({ t }) {
             {tabs.map((tab, i) => (
               <button key={tab.id} onClick={() => setActiveTab(i)} style={{
                 padding: '0.75rem 0.5rem', borderRadius: 10, border: 'none', cursor: 'pointer',
-                background: activeTab === i ? t.accent : (isDark ? 'rgba(255,255,255,0.04)' : '#f5f5f5'),
+                background: activeTab === i ? t.accent : '#f5f5f5',
                 color: activeTab === i ? t.accentText : t.textSecondary,
                 fontFamily: HOME_FONTS.body, fontSize: '0.8rem', fontWeight: 600,
                 transition: 'all 0.25s', textAlign: 'center',
@@ -982,7 +906,6 @@ function HomePreview({ t }) {
    FEATURE GRID
    ═══════════════════════════════════════════════════════════ */
 function OssFeatures({ t }) {
-  const isDark = t === HOME_THEMES.dark;
   const features = [
     { icon: 'bi-grid-3x3-gap', title: 'Market Sweep', desc: 'Systematically review every company in a market, A to Z. No cherry-picking, no blind spots.' },
     { icon: 'bi-list-check', title: 'Custom Checklists', desc: 'Build your own research framework. Ask the same rigorous questions for every company, every time.' },
@@ -1042,7 +965,6 @@ function OssFeatures({ t }) {
    THE METHOD (Origin Story)
    ═══════════════════════════════════════════════════════════ */
 function OssMethod({ t }) {
-  const isDark = t === HOME_THEMES.dark;
   return (
     <section id="method" className="section-pad" style={{ background: t.sectionAltBg, padding: '5rem 2rem' }}>
       <div style={{ maxWidth: 780, margin: '0 auto' }}>
@@ -1174,7 +1096,6 @@ function OssPrivacy({ t }) {
    SELF-HOST vs MANAGED
    ═══════════════════════════════════════════════════════════ */
 function OssHosting({ t }) {
-  const isDark = t === HOME_THEMES.dark;
   return (
     <section id="self-host" className="section-pad" style={{ background: t.sectionAltBg, padding: '5rem 2rem' }}>
       <div style={{ maxWidth: 780, margin: '0 auto' }}>
@@ -1202,7 +1123,7 @@ function OssHosting({ t }) {
                 display: 'inline-flex', alignSelf: 'flex-start', padding: '0.25rem 0.75rem',
                 borderRadius: 6, fontSize: '0.7rem', fontWeight: 700,
                 textTransform: 'uppercase', letterSpacing: '0.08em',
-                background: isDark ? 'rgba(62,207,142,0.1)' : '#f0fdf4',
+                background: '#f0fdf4',
                 color: t.accent, marginBottom: '1rem',
               }}>Free forever</div>
               <h3 style={{
@@ -1215,7 +1136,7 @@ function OssHosting({ t }) {
               }}>
                 Clone the repo, run <code style={{
                   fontFamily: HOME_FONTS.mono, fontSize: '0.8rem', padding: '0.15rem 0.4rem',
-                  borderRadius: 4, background: isDark ? 'rgba(255,255,255,0.06)' : '#f1f5f9',
+                  borderRadius: 4, background: '#f1f5f9',
                 }}>docker compose up</code>, and you're live. Full control, full privacy.
               </p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', flex: 1 }}>
@@ -1250,7 +1171,7 @@ function OssHosting({ t }) {
           <HomeReveal delay={0.12}>
             <div style={{
               padding: '2rem 1.75rem', borderRadius: 14, height: '100%',
-              background: isDark ? 'rgba(62,207,142,0.04)' : '#fafffe',
+              background: '#fafffe',
               border: `2px solid ${t.accent}`,
               display: 'flex', flexDirection: 'column',
             }}>
@@ -1317,8 +1238,7 @@ function OssHosting({ t }) {
    QUICKSTART
    ═══════════════════════════════════════════════════════════ */
 function OssQuickstart({ t }) {
-  const isDark = t === HOME_THEMES.dark;
-  const codeBg = isDark ? '#0a0e14' : '#1e293b';
+  const codeBg = '#1e293b';
   const steps = [
     { cmd: 'git clone https://github.com/warlock20/investment-checklist.git' },
     { cmd: 'cd investment-checklist' },
@@ -1343,7 +1263,7 @@ function OssQuickstart({ t }) {
         <HomeReveal delay={0.1}>
           <div style={{
             background: codeBg, borderRadius: 14, overflow: 'hidden',
-            boxShadow: isDark ? '0 16px 48px rgba(0,0,0,0.4)' : '0 16px 48px rgba(0,0,0,0.15)',
+            boxShadow: '0 16px 48px rgba(0,0,0,0.15)',
           }}>
             <div style={{
               padding: '10px 16px', borderBottom: '1px solid rgba(255,255,255,0.06)',
@@ -1360,7 +1280,7 @@ function OssQuickstart({ t }) {
               {steps.map((step, i) => (
                 <div key={i} style={{ marginBottom: i < steps.length - 1 ? 6 : 0 }}>
                   <div style={{ fontFamily: HOME_FONTS.mono, fontSize: '0.8rem', color: '#e2e8f0', display: 'flex', alignItems: 'center', gap: 8, whiteSpace: 'nowrap' }}>
-                    <span style={{ color: isDark ? '#3ecf8e' : '#4ade80' }}>$</span>
+                    <span style={{ color: '#4ade80' }}>$</span>
                     <span>{step.cmd}</span>
                   </div>
                 </div>
@@ -1382,7 +1302,7 @@ function OssQuickstart({ t }) {
           }}>
             That's it. Open <code style={{
               fontFamily: HOME_FONTS.mono, fontSize: '0.8rem', padding: '0.15rem 0.4rem',
-              borderRadius: 4, background: isDark ? 'rgba(255,255,255,0.06)' : '#f1f5f9',
+              borderRadius: 4, background: '#f1f5f9',
             }}>localhost:5000</code> and start researching.
           </p>
           <div style={{
@@ -1470,33 +1390,10 @@ function OssFooter({ t }) {
    APP ROOT
    ═══════════════════════════════════════════════════════════ */
 function OssApp() {
-  const [themeKey, setTheme] = useState(() => localStorage.getItem('swa-oss-theme') || 'dark');
-  useEffect(() => { localStorage.setItem('swa-oss-theme', themeKey); }, [themeKey]);
-  const t = HOME_THEMES[themeKey];
-
-  const themes = Object.entries(HOME_THEMES).map(([k, v]) => ({ key: k, name: v.name }));
+  const t = HOME_THEME;
 
   return (
     <div style={{ background: t.sectionBg, minHeight: '100vh' }}>
-      {/* Theme switcher */}
-      <div style={{
-        position: 'fixed', bottom: 20, right: 20, zIndex: 200,
-        display: 'flex', gap: 4, padding: 4, borderRadius: 10,
-        background: t === HOME_THEMES.dark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)',
-        backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)',
-        border: `1px solid ${t.cardBorder}`,
-      }}>
-        {themes.map(th => (
-          <button key={th.key} onClick={() => setTheme(th.key)} style={{
-            padding: '6px 12px', borderRadius: 7, border: 'none', cursor: 'pointer',
-            fontSize: '0.7rem', fontWeight: 600, fontFamily: HOME_FONTS.body,
-            background: themeKey === th.key ? t.accent : 'transparent',
-            color: themeKey === th.key ? t.accentText : t.textSecondary,
-            transition: 'all 0.2s',
-          }}>{th.name}</button>
-        ))}
-      </div>
-
       <OssNav t={t} />
       <OssHero t={t} />
       <OssPhilosophy t={t} />
