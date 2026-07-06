@@ -1,0 +1,1522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Start with A — Open-Source Investment Research Platform</title>
+  <meta name="description" content="A systematic, open-source investment research platform inspired by Buffett's method. Self-hostable, privacy-first, powered by AI. Stop chasing stock tips — start building a framework.">
+  <meta name="keywords" content="investment research, value investing, open source, self-hosted, stock analysis, Warren Buffett, systematic investing, research framework">
+  <meta name="author" content="Start with A">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://startwitha.xyz">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://startwitha.xyz">
+  <meta property="og:title" content="Start with A — Open-Source Investment Research Platform">
+  <meta property="og:description" content="A systematic research process that turns scattered notes and gut feelings into disciplined investment decisions. Self-hosted, privacy-first, powered by AI.">
+  <meta property="og:site_name" content="Start with A">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Start with A — Open-Source Investment Research Platform">
+  <meta name="twitter:description" content="Stop chasing stock tips. Start building a framework. Open-source, self-hostable, privacy-first.">
+
+  <!-- Favicon (inline SVG) -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%232d6a4f'/><text x='50' y='72' font-family='monospace' font-size='60' font-weight='bold' fill='white' text-anchor='middle'>A</text></svg>">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; overflow-x: hidden; }
+    code { font-family: 'JetBrains Mono', monospace; }
+
+    /* Mobile responsive overrides */
+    @media (max-width: 768px) {
+      .nav-links { display: none !important; }
+      .mobile-toggle { display: flex !important; }
+      .mobile-menu { display: flex !important; }
+      .grid-3 { grid-template-columns: 1fr !important; }
+      .grid-2 { grid-template-columns: 1fr !important; }
+      .grid-4 { grid-template-columns: repeat(2, 1fr) !important; }
+      .philosophy-grid { grid-template-columns: 1fr !important; gap: 1rem !important; }
+      .footer-layout { flex-direction: column !important; gap: 1.25rem !important; text-align: center !important; }
+      .footer-layout > div:last-child { text-align: center !important; }
+      .mockup-sidebar { display: none !important; }
+      .mockup-focus-queue { flex-direction: column !important; }
+      .mockup-queue { width: 100% !important; }
+      .hero-section { padding: 5rem 1.25rem 3rem !important; min-height: auto !important; }
+      .section-pad { padding-left: 1.25rem !important; padding-right: 1.25rem !important; }
+    }
+
+    @media (max-width: 480px) {
+      .grid-4 { grid-template-columns: 1fr !important; }
+      .cta-buttons { flex-direction: column !important; align-items: center !important; }
+      .cta-buttons a { width: 100% !important; text-align: center !important; justify-content: center !important; }
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <!-- React Production -->
+  <script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.26.10/babel.min.js" crossorigin="anonymous"></script>
+
+  <script type="text/babel">
+/* ═══════════════════════════════════════════════════════════
+   START WITH A — Design Tokens & Constants
+   ═══════════════════════════════════════════════════════════ */
+
+const { useState, useEffect, useRef, useCallback } = React;
+
+const HOME_FONTS = {
+  heading: "'Poppins', sans-serif",
+  body: "'Inter', -apple-system, sans-serif",
+  mono: "'JetBrains Mono', monospace",
+};
+
+const HOME_THEMES = {
+  warm: {
+    name: 'The Ledger',
+    heroBg: '#faf7f2', sectionBg: '#faf7f2', sectionAltBg: '#f0ece4',
+    navBg: 'rgba(250,247,242,0.92)', ctaBg: '#1a1814', footerBg: '#1a1814',
+    heroText: '#1a1814', heroMuted: '#5c574d',
+    textPrimary: '#1a1814', textSecondary: '#5c574d', textFaint: '#8a8477',
+    accent: '#2d6a4f', accentLight: '#40916c',
+    accentSoft: 'rgba(45,106,79,0.07)', accentText: '#fff',
+    cardBg: '#ffffff', cardBorder: '#e0d9cd', cardBorderHover: '#2d6a4f',
+    quoteBg: 'rgba(45,106,79,0.04)', quoteBorder: '#2d6a4f',
+    mockupBg: '#fff', mockupBorder: '#e0d9cd',
+    philosophyBg: '#1a1814', philosophyText: 'rgba(255,255,255,0.88)', philosophyMuted: 'rgba(255,255,255,0.45)',
+    stepNumBg: 'rgba(45,106,79,0.1)',
+  },
+  dark: {
+    name: 'After Hours',
+    heroBg: '#0c1017', sectionBg: '#0c1017', sectionAltBg: '#111822',
+    navBg: 'rgba(12,16,23,0.92)', ctaBg: '#080b10', footerBg: '#080b10',
+    heroText: '#e8ecf1', heroMuted: 'rgba(200,215,230,0.6)',
+    textPrimary: '#e2e8f0', textSecondary: 'rgba(200,215,230,0.55)', textFaint: 'rgba(200,215,230,0.35)',
+    accent: '#3ecf8e', accentLight: '#5ee0a8',
+    accentSoft: 'rgba(62,207,142,0.08)', accentText: '#0c1017',
+    cardBg: 'rgba(255,255,255,0.03)', cardBorder: 'rgba(255,255,255,0.07)', cardBorderHover: '#3ecf8e',
+    quoteBg: 'rgba(62,207,142,0.04)', quoteBorder: '#3ecf8e',
+    mockupBg: '#141c28', mockupBorder: 'rgba(255,255,255,0.07)',
+    philosophyBg: 'rgba(62,207,142,0.04)', philosophyText: 'rgba(255,255,255,0.85)', philosophyMuted: 'rgba(255,255,255,0.4)',
+    stepNumBg: 'rgba(62,207,142,0.12)',
+  },
+  clean: {
+    name: 'Clean',
+    heroBg: '#ffffff', sectionBg: '#ffffff', sectionAltBg: '#f7f9f8',
+    navBg: 'rgba(255,255,255,0.92)', ctaBg: '#0f172a', footerBg: '#0f172a',
+    heroText: '#0f172a', heroMuted: '#475569',
+    textPrimary: '#0f172a', textSecondary: '#475569', textFaint: '#94a3b8',
+    accent: '#2d6a4f', accentLight: '#40916c',
+    accentSoft: 'rgba(45,106,79,0.05)', accentText: '#fff',
+    cardBg: '#ffffff', cardBorder: '#e2e8f0', cardBorderHover: '#2d6a4f',
+    quoteBg: 'rgba(45,106,79,0.03)', quoteBorder: '#2d6a4f',
+    mockupBg: '#fff', mockupBorder: '#e2e8f0',
+    philosophyBg: '#f0fdf4', philosophyText: '#1b4332', philosophyMuted: '#40916c',
+    stepNumBg: 'rgba(45,106,79,0.08)',
+  },
+};
+
+/* ── REVEAL ANIMATION ─── */
+function useHomeReveal(threshold) {
+  const ref = useRef(null);
+  const [visible, setVisible] = useState(true);
+  const [hasSetup, setHasSetup] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || !('IntersectionObserver' in window)) return;
+    const timer = setTimeout(() => {
+      const rect = el.getBoundingClientRect();
+      const inView = rect.top < window.innerHeight && rect.bottom > 0;
+      if (!inView) { setVisible(false); setHasSetup(true); }
+    }, 50);
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    if (!hasSetup) return;
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) { setVisible(true); obs.disconnect(); }
+    }, { threshold: threshold || 0.08 });
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [hasSetup]);
+
+  return [ref, visible];
+}
+
+function HomeReveal({ children, delay, style }) {
+  const [ref, visible] = useHomeReveal(0.08);
+  const d = delay || 0;
+  return (
+    <div ref={ref} style={{
+      ...style,
+      opacity: visible ? 1 : 0,
+      transform: visible ? 'translateY(0)' : 'translateY(22px)',
+      transition: `opacity 0.6s ease ${d}s, transform 0.6s ease ${d}s`,
+    }}>
+      {children}
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════
+   NAVIGATION
+   ═══════════════════════════════════════════════════════════ */
+function OssNav({ t }) {
+  const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const isDark = t === HOME_THEMES.dark;
+
+  useEffect(() => {
+    const fn = () => setScrolled(window.scrollY > 40);
+    window.addEventListener('scroll', fn, { passive: true });
+    return () => window.removeEventListener('scroll', fn);
+  }, []);
+
+  // Close menu on navigation
+  const handleNavClick = useCallback(() => setMenuOpen(false), []);
+
+  const navLinks = [
+    { href: '#features', label: 'Features' },
+    { href: '#method', label: 'The Method' },
+    { href: '#self-host', label: 'Self-Host' },
+  ];
+
+  return (
+    <>
+      <nav style={{
+        position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
+        background: t.navBg, backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
+        borderBottom: `1px solid ${t.cardBorder}`,
+        padding: '0 2rem', height: 60, display: 'flex', alignItems: 'center',
+        justifyContent: 'space-between',
+        boxShadow: scrolled ? '0 2px 16px rgba(0,0,0,0.06)' : 'none',
+        transition: 'box-shadow 0.3s',
+      }}>
+        <a href="#" style={{
+          fontFamily: HOME_FONTS.heading, fontSize: '1.1rem', fontWeight: 700,
+          color: t.heroText, textDecoration: 'none', letterSpacing: '-0.02em',
+          display: 'flex', alignItems: 'center', gap: 8,
+        }}>
+          <span style={{
+            display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+            width: 28, height: 28, borderRadius: 6, background: t.accent, color: t.accentText,
+            fontFamily: HOME_FONTS.mono, fontWeight: 700, fontSize: 14, lineHeight: 1,
+          }}>A</span>
+          Start with A
+        </a>
+
+        {/* Desktop links */}
+        <div className="nav-links" style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
+          {navLinks.map(link => (
+            <a key={link.href} href={link.href} style={{ color: t.heroMuted, textDecoration: 'none', fontSize: '0.875rem', fontFamily: HOME_FONTS.body, fontWeight: 500 }}>{link.label}</a>
+          ))}
+          <a href="https://github.com/warlock20/investment-checklist" target="_blank" rel="noopener" style={{
+            color: t.heroMuted, textDecoration: 'none', fontSize: '0.875rem',
+            fontFamily: HOME_FONTS.body, fontWeight: 500, display: 'flex', alignItems: 'center', gap: 4,
+          }}>
+            GitHub
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M3.5 1.5h7m0 0v7m0-7L1.5 10.5"></path></svg>
+          </a>
+          <a href="#" style={{
+            padding: '0.5rem 1.2rem', background: t.accent, color: t.accentText,
+            borderRadius: 8, fontSize: '0.875rem', fontWeight: 600, textDecoration: 'none',
+            fontFamily: HOME_FONTS.body,
+          }}>Get Started</a>
+        </div>
+
+        {/* Mobile hamburger */}
+        <button className="mobile-toggle" onClick={() => setMenuOpen(!menuOpen)} style={{
+          display: 'none', background: 'none', border: 'none', cursor: 'pointer',
+          flexDirection: 'column', gap: 5, padding: 8,
+        }} aria-label="Toggle menu">
+          <span style={{ display: 'block', width: 22, height: 2, background: t.heroText, borderRadius: 2, transition: 'all 0.3s', transform: menuOpen ? 'rotate(45deg) translateY(7px)' : 'none' }}></span>
+          <span style={{ display: 'block', width: 22, height: 2, background: t.heroText, borderRadius: 2, transition: 'all 0.3s', opacity: menuOpen ? 0 : 1 }}></span>
+          <span style={{ display: 'block', width: 22, height: 2, background: t.heroText, borderRadius: 2, transition: 'all 0.3s', transform: menuOpen ? 'rotate(-45deg) translateY(-7px)' : 'none' }}></span>
+        </button>
+      </nav>
+
+      {/* Mobile menu overlay */}
+      {menuOpen && (
+        <div className="mobile-menu" style={{
+          display: 'none', position: 'fixed', top: 60, left: 0, right: 0, bottom: 0,
+          zIndex: 99, background: t.navBg, backdropFilter: 'blur(20px)',
+          flexDirection: 'column', padding: '2rem', gap: '1.5rem',
+        }}>
+          {navLinks.map(link => (
+            <a key={link.href} href={link.href} onClick={handleNavClick} style={{
+              color: t.textPrimary, textDecoration: 'none', fontSize: '1.125rem',
+              fontFamily: HOME_FONTS.body, fontWeight: 600, padding: '0.5rem 0',
+              borderBottom: `1px solid ${t.cardBorder}`,
+            }}>{link.label}</a>
+          ))}
+          <a href="https://github.com/warlock20/investment-checklist" target="_blank" rel="noopener" onClick={handleNavClick} style={{
+            color: t.textPrimary, textDecoration: 'none', fontSize: '1.125rem',
+            fontFamily: HOME_FONTS.body, fontWeight: 600, padding: '0.5rem 0',
+            borderBottom: `1px solid ${t.cardBorder}`,
+            display: 'flex', alignItems: 'center', gap: 8,
+          }}>
+            GitHub
+            <svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M3.5 1.5h7m0 0v7m0-7L1.5 10.5"></path></svg>
+          </a>
+          <a href="#" onClick={handleNavClick} style={{
+            padding: '0.8rem 2rem', background: t.accent, color: t.accentText,
+            borderRadius: 10, fontWeight: 600, fontSize: '1rem', textDecoration: 'none',
+            fontFamily: HOME_FONTS.body, textAlign: 'center', marginTop: '0.5rem',
+          }}>Get Started</a>
+        </div>
+      )}
+    </>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════
+   HERO
+   ═══════════════════════════════════════════════════════════ */
+function OssHero({ t }) {
+  const isDark = t === HOME_THEMES.dark;
+  return (
+    <section className="hero-section" style={{
+      background: t.heroBg, minHeight: '100vh', display: 'flex', alignItems: 'center',
+      justifyContent: 'center', padding: '6rem 2rem 5rem', position: 'relative',
+    }}>
+      {isDark && <div style={{
+        position: 'absolute', inset: 0, opacity: 0.025,
+        backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)',
+        backgroundSize: '28px 28px',
+      }}></div>}
+      <div style={{ maxWidth: 720, textAlign: 'center', position: 'relative', zIndex: 1 }}>
+        <HomeReveal>
+          <p style={{
+            fontFamily: HOME_FONTS.body, fontSize: '0.8rem', fontWeight: 600,
+            letterSpacing: '0.12em', textTransform: 'uppercase', color: t.accent,
+            marginBottom: '1.25rem',
+          }}>Open-source investment research platform</p>
+        </HomeReveal>
+
+        <HomeReveal delay={0.08}>
+          <h1 style={{
+            fontFamily: HOME_FONTS.heading, fontSize: 'clamp(2rem, 5vw, 3.5rem)',
+            fontWeight: 800, lineHeight: 1.1, color: t.heroText,
+            marginBottom: '1.25rem', letterSpacing: '-0.03em',
+          }}>Stop chasing stock tips.<br />Start building a framework.</h1>
+        </HomeReveal>
+
+        <HomeReveal delay={0.16}>
+          <p style={{
+            fontFamily: HOME_FONTS.body, fontSize: '1.125rem',
+            lineHeight: 1.7, color: t.heroMuted, maxWidth: 560, margin: '0 auto 2rem',
+          }}>
+            A systematic research process that turns scattered notes and gut feelings into disciplined investment decisions. Self-hosted, privacy-first, powered by AI.
+          </p>
+        </HomeReveal>
+
+        <HomeReveal delay={0.24}>
+          <div className="cta-buttons" style={{ display: 'flex', gap: '0.875rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+            <a href="#" style={{
+              padding: '0.8rem 2rem', background: t.accent, color: t.accentText,
+              borderRadius: 10, fontWeight: 600, fontSize: '1rem', textDecoration: 'none',
+              fontFamily: HOME_FONTS.body, boxShadow: `0 4px 16px ${t.accent}30`,
+            }}>Get Started — It's Free</a>
+            <a href="https://github.com/warlock20/investment-checklist" target="_blank" rel="noopener" style={{
+              padding: '0.8rem 1.5rem', color: t.heroMuted, fontWeight: 500,
+              fontSize: '1rem', textDecoration: 'none', fontFamily: HOME_FONTS.body,
+              borderRadius: 10, border: `1px solid ${t.cardBorder}`,
+              display: 'inline-flex', alignItems: 'center', gap: 8,
+            }}>
+              <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>
+              View on GitHub
+            </a>
+          </div>
+        </HomeReveal>
+
+        <HomeReveal delay={0.32}>
+          <div style={{
+            display: 'flex', gap: '1.5rem', justifyContent: 'center', marginTop: '2rem',
+            fontSize: '0.8rem', color: isDark ? 'rgba(200,215,230,0.35)' : '#9ca3af',
+            fontFamily: HOME_FONTS.body, fontWeight: 500, flexWrap: 'wrap',
+          }}>
+            <span>AGPL-3.0 Licensed</span>
+            <span style={{ opacity: 0.4 }}>·</span>
+            <span>Self-hostable</span>
+            <span style={{ opacity: 0.4 }}>·</span>
+            <span>Your data never leaves your server</span>
+          </div>
+        </HomeReveal>
+      </div>
+    </section>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════
+   PHILOSOPHY STRIP
+   ═══════════════════════════════════════════════════════════ */
+function OssPhilosophy({ t }) {
+  const isDark = t.philosophyBg.startsWith('#1') || t.philosophyBg.startsWith('rgba(6');
+  const items = [
+    { icon: 'bi-x-circle', text: 'Not a stock screener' },
+    { icon: 'bi-x-circle', text: 'Not AI-generated stock picks' },
+    { icon: 'bi-check-circle', text: 'A framework for better investment thinking' },
+  ];
+  return (
+    <section style={{
+      background: t.philosophyBg, padding: '2rem 2rem',
+      borderTop: isDark ? 'none' : `1px solid ${t.cardBorder}`,
+      borderBottom: isDark ? 'none' : `1px solid ${t.cardBorder}`,
+    }}>
+      <div className="philosophy-grid" style={{
+        maxWidth: 860, margin: '0 auto', display: 'grid',
+        gridTemplateColumns: 'repeat(3, 1fr)', gap: '2rem', textAlign: 'center',
+      }}>
+        {items.map((item, i) => (
+          <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.4rem' }}>
+            <i className={`bi ${item.icon}`} style={{ fontSize: '1.1rem', color: t.philosophyMuted }}></i>
+            <span style={{
+              fontFamily: HOME_FONTS.body, fontSize: '0.9rem', fontWeight: 500, color: t.philosophyText,
+            }}>{item.text}</span>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════
+   PRODUCT MOCKUPS
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── SWEEP MOCKUP ───────────────────── */
+function SweepMockup({ t }) {
+  const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+  const isDark = t === HOME_THEMES.dark;
+  const app = isDark ? {
+    bg: '#141c28', border: 'rgba(255,255,255,0.06)', text: '#e2e8f0',
+    muted: 'rgba(200,215,230,0.55)', faint: 'rgba(200,215,230,0.3)',
+    cardBg: 'rgba(255,255,255,0.04)', softGreen: 'rgba(62,207,142,0.08)',
+    softGreenBorder: 'rgba(62,207,142,0.15)', accent: '#3ecf8e',
+  } : {
+    bg: '#fff', border: '#e5e7eb', text: '#111827',
+    muted: '#6b7280', faint: '#9ca3af',
+    cardBg: '#fff', softGreen: '#f0fdf4',
+    softGreenBorder: '#dcfce7', accent: '#2d6a4f',
+  };
+
+  return (
+    <div style={{
+      background: app.bg, border: `1px solid ${t.mockupBorder}`, borderRadius: 16,
+      overflow: 'hidden',
+      boxShadow: isDark
+        ? '0 24px 64px rgba(0,0,0,0.5), 0 4px 16px rgba(0,0,0,0.3)'
+        : '0 24px 64px rgba(0,0,0,0.1), 0 4px 16px rgba(0,0,0,0.05)',
+      maxWidth: 820, margin: '0 auto',
+    }}>
+      <div style={{
+        padding: '10px 16px', borderBottom: `1px solid ${app.border}`,
+        display: 'flex', alignItems: 'center', gap: 8,
+      }}>
+        <div style={{ display: 'flex', gap: 6 }}>
+          {['#ff5f57','#febd2e','#28c840'].map(c => (
+            <div key={c} style={{ width: 10, height: 10, borderRadius: '50%', background: c, opacity: isDark ? 0.8 : 1 }}></div>
+          ))}
+        </div>
+        <div style={{ flex: 1, textAlign: 'center', fontSize: 11, color: app.faint, fontFamily: HOME_FONTS.body }}>
+          Start with A — DAX 40
+        </div>
+      </div>
+
+      <div style={{ padding: '18px 22px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span style={{ fontSize: 18 }}>🇩🇪</span>
+            <div>
+              <div style={{ fontFamily: HOME_FONTS.heading, fontWeight: 700, fontSize: 15, color: app.text }}>DAX 40 — Germany</div>
+              <div style={{ fontSize: 11, color: app.muted }}>33 of 40 reviewed</div>
+            </div>
+          </div>
+          <div style={{ textAlign: 'right' }}>
+            <div style={{ fontFamily: HOME_FONTS.heading, fontWeight: 800, fontSize: 24, color: app.accent, lineHeight: 1 }}>83%</div>
+            <div style={{ fontSize: 10, color: app.faint }}>complete</div>
+          </div>
+        </div>
+
+        <div style={{ height: 5, background: app.border, borderRadius: 3, marginBottom: 14, overflow: 'hidden' }}>
+          <div style={{ height: '100%', width: '83%', background: `linear-gradient(90deg, #475569, ${app.accent})`, borderRadius: 3 }}></div>
+        </div>
+
+        <div style={{ display: 'flex', gap: 2, marginBottom: 16, justifyContent: 'center', flexWrap: 'wrap' }}>
+          {letters.map((l, i) => {
+            const status = i < 4 ? 'done' : i === 4 ? 'active' : 'pending';
+            return (
+              <div key={l} style={{
+                width: 26, height: 26, borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: 10, fontWeight: 700, fontFamily: HOME_FONTS.mono,
+                background: status === 'done' ? app.accent : status === 'active' ? app.softGreen : (isDark ? 'rgba(255,255,255,0.04)' : '#f3f4f6'),
+                color: status === 'done' ? '#fff' : status === 'active' ? app.accent : app.faint,
+                border: status === 'active' ? `1.5px dashed ${app.accent}` : '1.5px solid transparent',
+              }}>{l}</div>
+            );
+          })}
+        </div>
+
+        <div className="mockup-focus-queue" style={{ display: 'flex', gap: 14 }}>
+          <div style={{
+            flex: 1, background: app.cardBg, border: `1px solid ${app.border}`,
+            borderRadius: 10, padding: 16,
+          }}>
+            <div style={{ fontSize: 10, color: app.faint, fontFamily: HOME_FONTS.mono, marginBottom: 10 }}>#12 of 40</div>
+            <div style={{ fontFamily: HOME_FONTS.heading, fontWeight: 700, fontSize: 17, color: app.text, marginBottom: 2 }}>E.ON SE</div>
+            <div style={{ fontSize: 12, color: app.muted, fontFamily: HOME_FONTS.mono, marginBottom: 14 }}>EOAN</div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6, marginBottom: 14 }}>
+              {[{ label: 'Sector', value: 'Utilities' }, { label: 'Market Cap', value: '€34.8B' }].map(m => (
+                <div key={m.label} style={{ padding: '6px 8px', background: app.softGreen, borderRadius: 5 }}>
+                  <div style={{ fontSize: 8, color: app.faint, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{m.label}</div>
+                  <div style={{ fontSize: 11, fontWeight: 600, color: app.text, marginTop: 1 }}>{m.value}</div>
+                </div>
+              ))}
+            </div>
+            <div style={{ display: 'flex', gap: 6 }}>
+              <button style={{
+                flex: 1, padding: '8px', borderRadius: 7, border: '1.5px solid #86efac',
+                background: '#f0fdf4', color: '#15803d', fontWeight: 700, fontSize: 12,
+                cursor: 'default', fontFamily: HOME_FONTS.body,
+              }}>📥 Inbox</button>
+              <button style={{
+                flex: 1, padding: '8px', borderRadius: 7, border: '1.5px solid #fca5a5',
+                background: '#fef2f2', color: '#b91c1c', fontWeight: 700, fontSize: 12,
+                cursor: 'default', fontFamily: HOME_FONTS.body,
+              }}>✕ Kill</button>
+            </div>
+          </div>
+
+          <div className="mockup-queue" style={{
+            width: 160, background: app.cardBg, border: `1px solid ${app.border}`,
+            borderRadius: 10, padding: 12,
+          }}>
+            <div style={{ fontSize: 9, fontWeight: 600, color: app.faint, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 8 }}>Up Next</div>
+            {['Fresenius SE', 'Hannover Rück', 'HeidelbergCement', 'Henkel AG'].map((name, i) => (
+              <div key={name} style={{
+                padding: '5px 7px', borderRadius: 4, marginBottom: 2, fontSize: 11,
+                background: i === 0 ? app.softGreen : 'transparent',
+                border: i === 0 ? `1px solid ${app.softGreenBorder}` : '1px solid transparent',
+                fontWeight: i === 0 ? 600 : 400, color: i === 0 ? app.text : app.muted,
+                fontFamily: HOME_FONTS.body,
+              }}>{name}</div>
+            ))}
+          </div>
+        </div>
+
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: 12, padding: '8px 12px', marginTop: 12,
+          background: app.softGreen, borderRadius: 7, border: `1px solid ${app.softGreenBorder}`,
+          fontSize: 11, color: app.muted, flexWrap: 'wrap',
+        }}>
+          <span style={{ fontWeight: 600, color: app.accent }}>⚡ 28 min</span>
+          <span style={{ width: 1, height: 12, background: app.softGreenBorder }}></span>
+          <span><strong style={{ color: app.text }}>14</strong> reviewed</span>
+          <span style={{ width: 1, height: 12, background: app.softGreenBorder }}></span>
+          <span style={{ color: '#059669' }}><strong>2</strong> → inbox</span>
+          <span style={{ width: 1, height: 12, background: app.softGreenBorder }}></span>
+          <span><strong style={{ color: app.text }}>12</strong> killed</span>
+          <span style={{ marginLeft: 'auto', fontSize: 9, color: app.faint }}>Today's session</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ── CHECKLIST MOCKUP ───────────────── */
+function ChecklistMockup({ t }) {
+  const isDark = t === HOME_THEMES.dark;
+  const app = isDark ? {
+    bg: '#141c28', border: 'rgba(255,255,255,0.06)', text: '#e2e8f0',
+    muted: 'rgba(200,215,230,0.55)', faint: 'rgba(200,215,230,0.3)',
+    cardBg: 'rgba(255,255,255,0.04)', softGreen: 'rgba(62,207,142,0.08)',
+    softGreenBorder: 'rgba(62,207,142,0.15)', accent: '#3ecf8e',
+    softRed: 'rgba(239,68,68,0.08)', softRedBorder: 'rgba(239,68,68,0.15)',
+    softAmber: 'rgba(245,158,11,0.08)', softAmberBorder: 'rgba(245,158,11,0.15)',
+    stepDone: '#3ecf8e', stepActive: '#3ecf8e',
+  } : {
+    bg: '#fff', border: '#e5e7eb', text: '#111827',
+    muted: '#6b7280', faint: '#9ca3af',
+    cardBg: '#fff', softGreen: '#f0fdf4',
+    softGreenBorder: '#dcfce7', accent: '#2d6a4f',
+    softRed: '#fef2f2', softRedBorder: '#fecaca',
+    softAmber: '#fffbeb', softAmberBorder: '#fde68a',
+    stepDone: '#2d6a4f', stepActive: '#2d6a4f',
+  };
+  return (
+    <div style={{
+      background: app.bg, border: `1px solid ${isDark ? app.border : '#e5e7eb'}`, borderRadius: 16,
+      overflow: 'hidden',
+      boxShadow: isDark ? '0 24px 64px rgba(0,0,0,0.5)' : '0 24px 64px rgba(0,0,0,0.1)',
+      maxWidth: 820, margin: '0 auto',
+    }}>
+      <div style={{ padding: '10px 16px', borderBottom: `1px solid ${app.border}`, display: 'flex', alignItems: 'center', gap: 8 }}>
+        <div style={{ display: 'flex', gap: 6 }}>
+          {['#ff5f57','#febd2e','#28c840'].map(c => (
+            <div key={c} style={{ width: 10, height: 10, borderRadius: '50%', background: c, opacity: isDark ? 0.8 : 1 }}></div>
+          ))}
+        </div>
+        <div style={{ flex: 1, textAlign: 'center', fontSize: 11, color: app.faint, fontFamily: HOME_FONTS.body }}>
+          Siemens AG — Research Checklist
+        </div>
+      </div>
+      <div style={{ display: 'flex' }}>
+        <div style={{ flex: 1, padding: '18px 22px' }}>
+          <div style={{ marginBottom: 16 }}>
+            <div style={{ fontSize: 9, fontWeight: 600, color: app.accent, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 4 }}>Value Investing Framework</div>
+            <div style={{ fontFamily: HOME_FONTS.heading, fontWeight: 700, fontSize: 16, color: app.text }}>Siemens AG</div>
+            <div style={{ fontSize: 11, color: app.muted, fontFamily: HOME_FONTS.mono }}>SIE · Industrials</div>
+          </div>
+          <div style={{ fontSize: 10, fontWeight: 600, color: app.text, marginBottom: 10, textTransform: 'uppercase', letterSpacing: '0.06em' }}>Project Workflow</div>
+          {[
+            { label: 'Free Research', status: 'done', time: '30615 min' },
+            { label: 'Checklist', status: 'active', time: 'Est: 60 min' },
+            { label: 'Investment Thesis', status: 'pending', time: '' },
+          ].map((step, i) => (
+            <div key={i} style={{
+              display: 'flex', alignItems: 'center', gap: 10, padding: '8px 10px', marginBottom: 4,
+              borderRadius: 8,
+              background: step.status === 'active' ? app.softGreen : 'transparent',
+              border: step.status === 'active' ? `1.5px dashed ${app.accent}` : '1.5px solid transparent',
+            }}>
+              <div style={{
+                width: 18, height: 18, borderRadius: '50%', flexShrink: 0,
+                background: step.status === 'done' ? app.stepDone : step.status === 'active' ? app.softGreen : app.border,
+                border: step.status === 'active' ? `2px solid ${app.accent}` : 'none',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                color: '#fff', fontSize: 9,
+              }}>{step.status === 'done' ? '✓' : ''}</div>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: 12, fontWeight: step.status === 'active' ? 700 : 500, color: app.text }}>
+                  {step.status === 'active' && <span style={{ fontSize: 8, color: app.accent, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginBottom: 1 }}>Current Step</span>}
+                  {step.label}
+                </div>
+                {step.time && <div style={{ fontSize: 9, color: app.faint }}>{step.time}</div>}
+              </div>
+              {step.status === 'done' && (
+                <div style={{ display: 'flex', gap: 4 }}>
+                  <span style={{ fontSize: 9, padding: '2px 6px', borderRadius: 4, border: `1px solid ${app.border}`, color: app.muted }}>Notes</span>
+                  <span style={{ fontSize: 9, padding: '2px 6px', borderRadius: 4, border: `1px solid ${app.border}`, color: app.muted }}>Revisit</span>
+                </div>
+              )}
+              {step.status === 'active' && (
+                <button style={{ fontSize: 11, padding: '5px 12px', borderRadius: 6, border: 'none', background: app.accent, color: isDark ? '#0c1017' : '#fff', fontWeight: 600, cursor: 'default' }}>Continue →</button>
+              )}
+            </div>
+          ))}
+        </div>
+        <div className="mockup-sidebar" style={{ width: 210, borderLeft: `1px solid ${app.border}`, padding: '16px 14px', background: isDark ? 'rgba(255,255,255,0.01)' : '#fafbfc' }}>
+          <div style={{ fontSize: 12, fontWeight: 700, color: app.text, marginBottom: 10 }}>Project Vitals</div>
+          {[
+            { label: 'Status', value: 'In Progress', color: '#3b82f6' },
+            { label: 'Progress', value: '33.3%', bar: true },
+            { label: 'Time Spent', value: '607.8 hrs', color: app.accent },
+            { label: 'Days Since Work', value: '4d', color: undefined },
+          ].map((item, i) => (
+            <div key={i} style={{ marginBottom: 8, paddingBottom: 8, borderBottom: i < 3 ? `1px solid ${app.border}` : 'none' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: 10, color: app.muted }}>{item.label}</span>
+                {item.value === 'In Progress' ? (
+                  <span style={{ fontSize: 8, padding: '1px 6px', borderRadius: 3, background: '#3b82f6', color: '#fff', fontWeight: 600 }}>{item.value}</span>
+                ) : (
+                  <span style={{ fontSize: 11, fontWeight: 600, color: item.color || app.text }}>{item.value}</span>
+                )}
+              </div>
+              {item.bar && (
+                <div style={{ height: 3, background: app.border, borderRadius: 2, marginTop: 4, overflow: 'hidden' }}>
+                  <div style={{ height: '100%', width: '33%', background: '#3b82f6', borderRadius: 2 }}></div>
+                </div>
+              )}
+            </div>
+          ))}
+          <div style={{ fontSize: 12, fontWeight: 700, color: app.text, marginBottom: 8, marginTop: 6 }}>Key Findings</div>
+          <div style={{ padding: '5px 7px', borderRadius: 5, background: app.softGreen, border: `1px solid ${app.softGreenBorder}`, marginBottom: 4, fontSize: 10 }}>
+            <span style={{ fontWeight: 600, color: '#059669' }}>Green Flag: </span>
+            <span style={{ color: app.muted }}>Strong moat</span>
+          </div>
+          <div style={{ padding: '5px 7px', borderRadius: 5, background: app.softRed, border: `1px solid ${app.softRedBorder}`, marginBottom: 8, fontSize: 10 }}>
+            <span style={{ fontWeight: 600, color: '#dc2626' }}>Red Flag: </span>
+            <span style={{ color: app.muted }}>Capital allocation</span>
+          </div>
+          <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
+            <span style={{ fontSize: 8, padding: '3px 6px', borderRadius: 4, background: '#f0fdf4', border: '1px solid #dcfce7', color: '#15803d', fontWeight: 600 }}>+ Green</span>
+            <span style={{ fontSize: 8, padding: '3px 6px', borderRadius: 4, background: '#fef2f2', border: '1px solid #fecaca', color: '#dc2626', fontWeight: 600 }}>+ Red</span>
+            <span style={{ fontSize: 8, padding: '3px 6px', borderRadius: 4, background: app.softAmber, border: `1px solid ${app.softAmberBorder}`, color: '#d97706', fontWeight: 600 }}>⚠ Must Exit</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ── KNOWLEDGE HUB MOCKUP ───────────── */
+function KnowledgeMockup({ t }) {
+  const isDark = t === HOME_THEMES.dark;
+  const app = isDark ? {
+    bg: '#141c28', border: 'rgba(255,255,255,0.06)', text: '#e2e8f0',
+    muted: 'rgba(200,215,230,0.55)', faint: 'rgba(200,215,230,0.3)',
+    cardBg: 'rgba(255,255,255,0.04)', accent: '#3ecf8e',
+    tabActive: '#3ecf8e', tabActiveBg: 'rgba(62,207,142,0.12)',
+    noteBg: 'rgba(255,255,255,0.03)', noteHeader: 'rgba(62,207,142,0.08)',
+    noteHeaderBorder: 'rgba(62,207,142,0.12)',
+  } : {
+    bg: '#fff', border: '#e5e7eb', text: '#111827',
+    muted: '#6b7280', faint: '#9ca3af',
+    cardBg: '#fff', accent: '#2d6a4f',
+    tabActive: '#fff', tabActiveBg: '#1e293b',
+    noteBg: '#fff', noteHeader: '#eef2ff',
+    noteHeaderBorder: '#c7d2fe',
+  };
+  return (
+    <div style={{
+      background: app.bg, border: `1px solid ${isDark ? app.border : '#e5e7eb'}`, borderRadius: 16,
+      overflow: 'hidden',
+      boxShadow: isDark ? '0 24px 64px rgba(0,0,0,0.5)' : '0 24px 64px rgba(0,0,0,0.1)',
+      maxWidth: 820, margin: '0 auto',
+    }}>
+      <div style={{ padding: '10px 16px', borderBottom: `1px solid ${app.border}`, display: 'flex', alignItems: 'center', gap: 8 }}>
+        <div style={{ display: 'flex', gap: 6 }}>
+          {['#ff5f57','#febd2e','#28c840'].map(c => (
+            <div key={c} style={{ width: 10, height: 10, borderRadius: '50%', background: c, opacity: isDark ? 0.8 : 1 }}></div>
+          ))}
+        </div>
+        <div style={{ flex: 1, textAlign: 'center', fontSize: 11, color: app.faint, fontFamily: HOME_FONTS.body }}>
+          Knowledge Hub — Research Notes
+        </div>
+      </div>
+      <div style={{ padding: '18px 22px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14, flexWrap: 'wrap', gap: 8 }}>
+          <div>
+            <div style={{ fontFamily: HOME_FONTS.heading, fontWeight: 700, fontSize: 16, color: app.text }}>Knowledge Hub</div>
+            <div style={{ fontSize: 11, color: app.muted }}>Your research notes and curated wisdom</div>
+          </div>
+          <button style={{ fontSize: 11, padding: '6px 14px', borderRadius: 7, border: 'none', background: isDark ? app.accent : '#1e293b', color: isDark ? '#0c1017' : '#fff', fontWeight: 600, cursor: 'default', display: 'flex', alignItems: 'center', gap: 4 }}>
+            <span style={{ fontSize: 12 }}>+</span> Create New Entry
+          </button>
+        </div>
+        <div style={{ display: 'flex', gap: 6, marginBottom: 16, flexWrap: 'wrap' }}>
+          {[
+            { label: 'All Items', count: 14, active: true },
+            { label: 'Curated Wisdom', count: 1, active: false },
+            { label: 'Research Notes', count: 13, active: false },
+          ].map((tab, i) => (
+            <div key={i} style={{
+              display: 'flex', alignItems: 'center', gap: 5, padding: '5px 12px', borderRadius: 6,
+              fontSize: 11, fontWeight: tab.active ? 600 : 400, cursor: 'default',
+              background: tab.active ? app.tabActiveBg : 'transparent',
+              color: tab.active ? app.tabActive : app.muted,
+              border: tab.active ? 'none' : `1px solid ${app.border}`,
+            }}>
+              {tab.label}
+              <span style={{
+                fontSize: 9, padding: '1px 5px', borderRadius: 8, fontWeight: 600,
+                background: tab.active ? (isDark ? 'rgba(62,207,142,0.2)' : 'rgba(255,255,255,0.2)') : app.border,
+                color: tab.active ? app.tabActive : app.faint,
+              }}>{tab.count}</span>
+            </div>
+          ))}
+        </div>
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: 8, padding: '8px 12px', borderRadius: 8,
+          border: `1px solid ${app.border}`, marginBottom: 16,
+        }}>
+          <span style={{ color: app.faint, fontSize: 13 }}>🔍</span>
+          <span style={{ color: app.faint, fontSize: 12 }}>Search knowledge base...</span>
+          <span style={{ marginLeft: 'auto', fontSize: 10, color: app.faint }}>Group by: Company ▾</span>
+        </div>
+        {[
+          { name: 'Siemens AG', count: 2, expanded: true },
+          { name: 'SAP SE', count: 1, expanded: false },
+        ].map((group, gi) => (
+          <div key={gi} style={{ marginBottom: 10 }}>
+            <div style={{
+              display: 'flex', alignItems: 'center', gap: 8, padding: '8px 10px',
+              borderRadius: 6, border: `1px solid ${app.border}`, cursor: 'default',
+            }}>
+              <span style={{ fontSize: 10, color: app.muted }}>{group.expanded ? '▾' : '▸'}</span>
+              <span style={{ fontSize: 12, fontWeight: 700, color: app.text }}>{group.name}</span>
+              <span style={{ fontSize: 10, color: app.faint }}>{group.count} item{group.count > 1 ? 's' : ''}</span>
+            </div>
+            {group.expanded && (
+              <div className="grid-2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginTop: 8, paddingLeft: 4 }}>
+                {[
+                  { title: 'Moved to Watchlist', body: 'Valuation too high. Too expensive.', tags: ['Investment Action', '#Moved-to-Watchlist'], date: 'Jun 06, 2026' },
+                  { title: 'Research Tips', body: 'Technology patented 20-30 years back. Check recent patents for future direction.', tags: ['Industry Analysis', '#ResearchTechniques'], date: 'Apr 15, 2026' },
+                ].map((note, ni) => (
+                  <div key={ni} style={{
+                    borderRadius: 8, border: `1px solid ${app.border}`, overflow: 'hidden',
+                    background: app.noteBg,
+                  }}>
+                    <div style={{ padding: '4px 10px', background: app.noteHeader, borderBottom: `1px solid ${isDark ? app.noteHeaderBorder : '#e0e7ff'}` }}>
+                      <span style={{ fontSize: 9, fontWeight: 600, color: isDark ? app.accent : '#4f46e5' }}>RESEARCH NOTE</span>
+                    </div>
+                    <div style={{ padding: '10px' }}>
+                      <div style={{ fontSize: 12, fontWeight: 700, color: app.text, marginBottom: 2 }}>{note.title}</div>
+                      <div style={{ fontSize: 9, color: app.faint, marginBottom: 6 }}>Siemens AG</div>
+                      <div style={{ fontSize: 10, color: app.muted, lineHeight: 1.5, marginBottom: 8 }}>{note.body}</div>
+                      <div style={{ display: 'flex', gap: 3, flexWrap: 'wrap', marginBottom: 6 }}>
+                        {note.tags.map((tag, ti) => (
+                          <span key={ti} style={{
+                            fontSize: 8, padding: '1px 5px', borderRadius: 3,
+                            background: ti === 0 ? (isDark ? 'rgba(62,207,142,0.1)' : '#eff6ff') : (isDark ? 'rgba(255,255,255,0.04)' : '#f1f5f9'),
+                            color: ti === 0 ? (isDark ? app.accent : '#2563eb') : app.muted,
+                            fontWeight: 500,
+                          }}>{tag}</span>
+                        ))}
+                      </div>
+                      <div style={{ fontSize: 9, color: app.faint }}>{note.date}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ── ARGOS AI MOCKUP ────────────────── */
+function ArgosMockup({ t }) {
+  const isDark = t === HOME_THEMES.dark;
+  const app = isDark ? {
+    bg: '#141c28', border: 'rgba(255,255,255,0.06)', text: '#e2e8f0',
+    muted: 'rgba(200,215,230,0.55)', faint: 'rgba(200,215,230,0.3)',
+    cardBg: 'rgba(255,255,255,0.04)', accent: '#3ecf8e',
+    aiBg: 'rgba(62,207,142,0.04)', aiBorder: 'rgba(62,207,142,0.12)',
+    warnBg: 'rgba(245,158,11,0.06)', warnBorder: 'rgba(245,158,11,0.15)',
+    infoBg: 'rgba(59,130,246,0.06)', infoBorder: 'rgba(59,130,246,0.15)',
+    successBg: 'rgba(62,207,142,0.06)', successBorder: 'rgba(62,207,142,0.12)',
+    dangerBg: 'rgba(239,68,68,0.06)', dangerBorder: 'rgba(239,68,68,0.12)',
+  } : {
+    bg: '#fff', border: '#e5e7eb', text: '#111827',
+    muted: '#6b7280', faint: '#9ca3af',
+    cardBg: '#fff', accent: '#2d6a4f',
+    aiBg: '#f0fdf4', aiBorder: '#dcfce7',
+    warnBg: '#fffbeb', warnBorder: '#fde68a',
+    infoBg: '#eff6ff', infoBorder: '#bfdbfe',
+    successBg: '#f0fdf4', successBorder: '#dcfce7',
+    dangerBg: '#fef2f2', dangerBorder: '#fecaca',
+  };
+
+  const insights = [
+    {
+      type: 'warn', icon: '⚠️', label: 'Pattern Detected',
+      title: 'You may be chasing momentum again',
+      body: 'E.ON is up 38% in 6 months. Your last 3 "inbox" decisions were also high-momentum names — and 2 of them you later regretted. Your best picks historically were contrarian.',
+      source: 'Based on your decision journal (14 entries)',
+    },
+    {
+      type: 'info', icon: '📚', label: 'From Your Knowledge Hub',
+      title: 'You wrote about this sector before',
+      body: '"European utilities — energy transition tailwinds are real, but regulatory overhang is always underpriced. Focus on capital discipline." — your research note from Feb 2026.',
+      source: 'Knowledge Hub · Utilities tag',
+    },
+    {
+      type: 'success', icon: '✦', label: 'Behavioral Insight',
+      title: 'Your hit rate improves when you slow down',
+      body: 'Companies where you spent 45+ minutes in research had a 3x better outcome than quick decisions. You\'ve spent 8 minutes on E.ON so far.',
+      source: 'Across 127 decisions in your history',
+    },
+    {
+      type: 'danger', icon: '🔁', label: 'Repeated Mistake',
+      title: 'You\'ve killed similar companies before — then bought them later at higher prices',
+      body: 'RWE and Uniper were killed in your MDAX sweep, then added to watchlist 3 months later at 20%+ higher. Utility names match this pattern.',
+      source: 'Decision journal · Kill → Regret pattern',
+    },
+  ];
+
+  const typeColors = {
+    warn: { bg: app.warnBg, border: app.warnBorder, accent: '#d97706' },
+    info: { bg: app.infoBg, border: app.infoBorder, accent: '#2563eb' },
+    success: { bg: app.successBg, border: app.successBorder, accent: isDark ? '#3ecf8e' : '#059669' },
+    danger: { bg: app.dangerBg, border: app.dangerBorder, accent: '#dc2626' },
+  };
+
+  return (
+    <div style={{
+      background: app.bg, border: `1px solid ${isDark ? app.border : '#e5e7eb'}`, borderRadius: 16,
+      overflow: 'hidden',
+      boxShadow: isDark ? '0 24px 64px rgba(0,0,0,0.5)' : '0 24px 64px rgba(0,0,0,0.1)',
+      maxWidth: 820, margin: '0 auto',
+    }}>
+      <div style={{ padding: '10px 16px', borderBottom: `1px solid ${app.border}`, display: 'flex', alignItems: 'center', gap: 8 }}>
+        <div style={{ display: 'flex', gap: 6 }}>
+          {['#ff5f57','#febd2e','#28c840'].map(c => (
+            <div key={c} style={{ width: 10, height: 10, borderRadius: '50%', background: c, opacity: isDark ? 0.8 : 1 }}></div>
+          ))}
+        </div>
+        <div style={{ flex: 1, textAlign: 'center', fontSize: 11, color: app.faint, fontFamily: HOME_FONTS.body }}>
+          Argos — E.ON SE
+        </div>
+      </div>
+      <div style={{ padding: '18px 22px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
+          <div style={{
+            width: 34, height: 34, borderRadius: 8, background: app.aiBg, border: `1px solid ${app.aiBorder}`,
+            display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16,
+          }}>🛡️</div>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontFamily: HOME_FONTS.heading, fontWeight: 700, fontSize: 16, color: app.text }}>Argos — Research Assistant</div>
+            <div style={{ fontSize: 11, color: app.muted }}>Insights from your research history · E.ON SE</div>
+          </div>
+          <div style={{ textAlign: 'right' }}>
+            <div style={{ fontFamily: HOME_FONTS.heading, fontWeight: 800, fontSize: 22, color: '#d97706', lineHeight: 1 }}>4</div>
+            <div style={{ fontSize: 9, color: app.faint }}>insights found</div>
+          </div>
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          {insights.map((ins, i) => {
+            const tc = typeColors[ins.type];
+            return (
+              <div key={i} style={{
+                padding: '12px 14px', borderRadius: 10,
+                background: tc.bg, border: `1px solid ${tc.border}`,
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
+                  <span style={{ fontSize: 12 }}>{ins.icon}</span>
+                  <span style={{ fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: tc.accent }}>{ins.label}</span>
+                </div>
+                <div style={{ fontSize: 12, fontWeight: 700, color: app.text, marginBottom: 4 }}>{ins.title}</div>
+                <p style={{ fontSize: 11, color: app.muted, lineHeight: 1.6, margin: '0 0 6px' }}>{ins.body}</p>
+                <div style={{ fontSize: 9, color: app.faint, fontStyle: 'italic' }}>{ins.source}</div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════
+   TABBED PRODUCT SHOWCASE
+   ═══════════════════════════════════════════════════════════ */
+function HomePreview({ t }) {
+  const [activeTab, setActiveTab] = useState(0);
+  const tabs = [
+    { id: 'sweep', label: "Start with the A's", icon: '🔤', desc: 'Systematic market sweep — every company, one by one' },
+    { id: 'checklist', label: 'Research Checklist', icon: '📋', desc: 'Multi-step workflow with progress tracking and key findings' },
+    { id: 'argos', label: 'Argos — AI Assistant', icon: '🛡️', desc: 'Your personal research assistant — surfaces insights from your data, warns you, helps you improve' },
+    { id: 'knowledge', label: 'Knowledge Hub', icon: '📚', desc: 'Your research notes, curated wisdom, and decision journal' },
+  ];
+  const isDark = t === HOME_THEMES.dark;
+
+  return (
+    <section className="section-pad" style={{ background: t.sectionBg, padding: '5rem 2rem', overflow: 'hidden' }}>
+      <div style={{ maxWidth: 920, margin: '0 auto' }}>
+        <HomeReveal>
+          <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
+            <p style={{
+              fontFamily: HOME_FONTS.body, fontSize: '0.8rem', fontWeight: 600,
+              letterSpacing: '0.1em', textTransform: 'uppercase', color: t.accent, marginBottom: '0.6rem',
+            }}>The Platform</p>
+            <h2 style={{
+              fontFamily: HOME_FONTS.heading, fontSize: 'clamp(1.4rem, 3vw, 2rem)',
+              fontWeight: 700, color: t.textPrimary, lineHeight: 1.2, marginBottom: '0.3rem',
+            }}>Not just screening. A complete research system.</h2>
+            <p style={{
+              fontFamily: HOME_FONTS.body, fontSize: '0.95rem', color: t.textSecondary, maxWidth: 520, margin: '0 auto',
+            }}>From first glance to investment thesis — every step is tracked, structured, and powered by AI.</p>
+          </div>
+        </HomeReveal>
+
+        <HomeReveal delay={0.1}>
+          <div className="grid-4" style={{
+            display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.5rem',
+            marginBottom: '1.5rem',
+          }}>
+            {tabs.map((tab, i) => (
+              <button key={tab.id} onClick={() => setActiveTab(i)} style={{
+                padding: '0.75rem 0.5rem', borderRadius: 10, border: 'none', cursor: 'pointer',
+                background: activeTab === i ? t.accent : (isDark ? 'rgba(255,255,255,0.04)' : '#f5f5f5'),
+                color: activeTab === i ? t.accentText : t.textSecondary,
+                fontFamily: HOME_FONTS.body, fontSize: '0.8rem', fontWeight: 600,
+                transition: 'all 0.25s', textAlign: 'center',
+                boxShadow: activeTab === i ? `0 2px 12px ${t.accent}30` : 'none',
+              }}>
+                <span style={{ display: 'block', fontSize: '1.1rem', marginBottom: 2 }}>{tab.icon}</span>
+                {tab.label}
+              </button>
+            ))}
+          </div>
+        </HomeReveal>
+
+        <HomeReveal delay={0.15}>
+          <p style={{
+            textAlign: 'center', fontFamily: HOME_FONTS.body, fontSize: '0.85rem',
+            color: t.textSecondary, marginBottom: '1.5rem', minHeight: '1.2em',
+          }}>{tabs[activeTab].desc}</p>
+        </HomeReveal>
+
+        <div style={{ minHeight: 300 }}>
+          {activeTab === 0 && <SweepMockup t={t} />}
+          {activeTab === 1 && <ChecklistMockup t={t} />}
+          {activeTab === 2 && <ArgosMockup t={t} />}
+          {activeTab === 3 && <KnowledgeMockup t={t} />}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════
+   FEATURE GRID
+   ═══════════════════════════════════════════════════════════ */
+function OssFeatures({ t }) {
+  const isDark = t === HOME_THEMES.dark;
+  const features = [
+    { icon: 'bi-grid-3x3-gap', title: 'Market Sweep', desc: 'Systematically review every company in a market, A to Z. No cherry-picking, no blind spots.' },
+    { icon: 'bi-list-check', title: 'Custom Checklists', desc: 'Build your own research framework. Ask the same rigorous questions for every company, every time.' },
+    { icon: 'bi-shield-check', title: 'Argos AI Assistant', desc: 'Your AI co-pilot reviews your research history, spots patterns, and warns you before you repeat past mistakes. Bring your own API key.' },
+    { icon: 'bi-book', title: 'Knowledge Hub', desc: 'Curated notes, sector insights, and research findings — all searchable, all tagged. Your institutional memory, compounding over time.' },
+    { icon: 'bi-funnel', title: 'Investment Pipeline', desc: 'Track every company from "first glance" to "investment thesis" through a structured pipeline. Know exactly where every idea stands.' },
+    { icon: 'bi-journal-text', title: 'Research Journal', desc: 'Log your thinking as you go. Capture not just what you decided, but why. Your future self will thank you.' },
+  ];
+
+  return (
+    <section id="features" className="section-pad" style={{ background: t.sectionBg, padding: '5rem 2rem' }}>
+      <div style={{ maxWidth: 960, margin: '0 auto' }}>
+        <HomeReveal>
+          <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
+            <p style={{
+              fontFamily: HOME_FONTS.body, fontSize: '0.8rem', fontWeight: 600,
+              letterSpacing: '0.1em', textTransform: 'uppercase', color: t.accent, marginBottom: '0.6rem',
+            }}>What You Get</p>
+            <h2 style={{
+              fontFamily: HOME_FONTS.heading, fontSize: 'clamp(1.4rem, 3vw, 2rem)',
+              fontWeight: 700, color: t.textPrimary, lineHeight: 1.2,
+            }}>Everything a serious investor needs. Nothing you don't.</h2>
+          </div>
+        </HomeReveal>
+        <div className="grid-3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.25rem' }}>
+          {features.map((f, i) => (
+            <HomeReveal key={i} delay={i * 0.06}>
+              <div style={{
+                padding: '1.75rem 1.5rem', borderRadius: 14, height: '100%',
+                background: t.cardBg, border: `1px solid ${t.cardBorder}`,
+                transition: 'border-color 0.25s, box-shadow 0.25s',
+              }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = t.accent; e.currentTarget.style.boxShadow = `0 4px 16px ${t.accent}12`; }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = t.cardBorder; e.currentTarget.style.boxShadow = 'none'; }}
+              >
+                <i className={`bi ${f.icon}`} style={{
+                  fontSize: '1.35rem', color: t.accent, marginBottom: '0.75rem', display: 'block',
+                }}></i>
+                <h3 style={{
+                  fontFamily: HOME_FONTS.heading, fontSize: '1rem', fontWeight: 700,
+                  color: t.textPrimary, marginBottom: '0.4rem',
+                }}>{f.title}</h3>
+                <p style={{
+                  fontFamily: HOME_FONTS.body, fontSize: '0.85rem', color: t.textSecondary,
+                  lineHeight: 1.65, margin: 0,
+                }}>{f.desc}</p>
+              </div>
+            </HomeReveal>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════
+   THE METHOD (Origin Story)
+   ═══════════════════════════════════════════════════════════ */
+function OssMethod({ t }) {
+  const isDark = t === HOME_THEMES.dark;
+  return (
+    <section id="method" className="section-pad" style={{ background: t.sectionAltBg, padding: '5rem 2rem' }}>
+      <div style={{ maxWidth: 780, margin: '0 auto' }}>
+        <HomeReveal>
+          <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+            <p style={{
+              fontFamily: HOME_FONTS.body, fontSize: '0.8rem', fontWeight: 600,
+              letterSpacing: '0.1em', textTransform: 'uppercase', color: t.accent, marginBottom: '0.6rem',
+            }}>The Method</p>
+            <h2 style={{
+              fontFamily: HOME_FONTS.heading, fontSize: 'clamp(1.8rem, 4vw, 3rem)',
+              fontWeight: 800, color: t.textPrimary, lineHeight: 1.1, letterSpacing: '-0.02em',
+            }}>Start with the A's.</h2>
+          </div>
+        </HomeReveal>
+
+        <div className="grid-2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+          <HomeReveal delay={0.08}>
+            <div style={{
+              padding: '2rem', borderRadius: 14, height: '100%',
+              background: t.cardBg, border: `1px solid ${t.cardBorder}`,
+            }}>
+              <p style={{
+                fontFamily: HOME_FONTS.body, fontSize: '1rem', color: t.textPrimary,
+                lineHeight: 1.75, margin: 0,
+              }}>
+                When Buffett was nineteen, he sat down with the Moody's manuals — thousands of pages of companies listed alphabetically — and went through them one by one, starting with the A's.
+              </p>
+              <p style={{
+                fontFamily: HOME_FONTS.body, fontSize: '0.95rem', color: t.textSecondary,
+                lineHeight: 1.7, margin: '1.25rem 0 0',
+              }}>
+                Not because he was smarter. Because he was willing to do the work nobody else would.
+              </p>
+              <p style={{
+                fontFamily: HOME_FONTS.body, fontSize: '0.95rem', color: t.textSecondary,
+                lineHeight: 1.7, margin: '1rem 0 0',
+              }}>
+                That discipline — systematic, exhaustive, patient — is what this platform is built on.
+              </p>
+            </div>
+          </HomeReveal>
+
+          <HomeReveal delay={0.14}>
+            <div style={{
+              padding: '2rem', borderRadius: 14, height: '100%',
+              background: t.quoteBg, borderLeft: `3px solid ${t.quoteBorder}`,
+              border: `1px solid ${t.cardBorder}`, borderLeftWidth: 3, borderLeftColor: t.quoteBorder,
+              display: 'flex', flexDirection: 'column', justifyContent: 'center',
+            }}>
+              <p style={{
+                fontFamily: HOME_FONTS.body, fontSize: '1.0625rem', fontStyle: 'italic',
+                color: t.textPrimary, lineHeight: 1.7, margin: 0,
+              }}>
+                "It is remarkable how much long-term advantage people like us have gotten by trying to be consistently not stupid, instead of trying to be very intelligent."
+              </p>
+              <footer style={{
+                fontFamily: HOME_FONTS.body, fontSize: '0.85rem', color: t.accent,
+                fontWeight: 600, fontStyle: 'normal', marginTop: '1.25rem',
+              }}>— Charlie Munger</footer>
+            </div>
+          </HomeReveal>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════
+   OPEN SOURCE & PRIVACY
+   ═══════════════════════════════════════════════════════════ */
+function OssPrivacy({ t }) {
+  const highlights = [
+    { icon: 'bi-shield-lock', title: 'Full Privacy', desc: 'Self-host on your own server. Your research, watchlists, and portfolio data never leave your infrastructure.' },
+    { icon: 'bi-code-slash', title: 'Fully Open Source', desc: 'Every line of code is public under AGPL-3.0. No telemetry, no tracking, no vendor lock-in.' },
+    { icon: 'bi-key', title: 'Bring Your Own Keys', desc: "AI features use your own API keys. We don't proxy, store, or have access to your AI interactions." },
+  ];
+
+  return (
+    <section id="open-source" className="section-pad" style={{ background: t.sectionBg, padding: '5rem 2rem' }}>
+      <div style={{ maxWidth: 860, margin: '0 auto' }}>
+        <HomeReveal>
+          <div style={{ textAlign: 'center', marginBottom: '1rem' }}>
+            <p style={{
+              fontFamily: HOME_FONTS.body, fontSize: '0.8rem', fontWeight: 600,
+              letterSpacing: '0.1em', textTransform: 'uppercase', color: t.accent, marginBottom: '0.6rem',
+            }}>Open Source & Privacy-First</p>
+            <h2 style={{
+              fontFamily: HOME_FONTS.heading, fontSize: 'clamp(1.4rem, 3vw, 2rem)',
+              fontWeight: 700, color: t.textPrimary, lineHeight: 1.2, marginBottom: '0.75rem',
+            }}>Your research. Your data. Your server.</h2>
+            <p style={{
+              fontFamily: HOME_FONTS.body, fontSize: '0.95rem', color: t.textSecondary,
+              maxWidth: 600, margin: '0 auto', lineHeight: 1.65,
+            }}>
+              Serious investors guard their thesis and holdings. That's why Start with A is fully open source under the AGPL-3.0 license. Run it on your own infrastructure. Audit every line of code. We never see your data.
+            </p>
+          </div>
+        </HomeReveal>
+
+        <div className="grid-3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.25rem', marginTop: '2rem' }}>
+          {highlights.map((h, i) => (
+            <HomeReveal key={i} delay={i * 0.08}>
+              <div style={{
+                padding: '1.75rem 1.5rem', borderRadius: 14, height: '100%',
+                background: t.cardBg, border: `1px solid ${t.cardBorder}`,
+              }}>
+                <i className={`bi ${h.icon}`} style={{
+                  fontSize: '1.35rem', color: t.accent, marginBottom: '0.75rem', display: 'block',
+                }}></i>
+                <h3 style={{
+                  fontFamily: HOME_FONTS.heading, fontSize: '1rem', fontWeight: 700,
+                  color: t.textPrimary, marginBottom: '0.4rem',
+                }}>{h.title}</h3>
+                <p style={{
+                  fontFamily: HOME_FONTS.body, fontSize: '0.85rem', color: t.textSecondary,
+                  lineHeight: 1.65, margin: 0,
+                }}>{h.desc}</p>
+              </div>
+            </HomeReveal>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SELF-HOST vs MANAGED
+   ═══════════════════════════════════════════════════════════ */
+function OssHosting({ t }) {
+  const isDark = t === HOME_THEMES.dark;
+  return (
+    <section id="self-host" className="section-pad" style={{ background: t.sectionAltBg, padding: '5rem 2rem' }}>
+      <div style={{ maxWidth: 780, margin: '0 auto' }}>
+        <HomeReveal>
+          <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
+            <p style={{
+              fontFamily: HOME_FONTS.body, fontSize: '0.8rem', fontWeight: 600,
+              letterSpacing: '0.1em', textTransform: 'uppercase', color: t.accent, marginBottom: '0.6rem',
+            }}>Choose Your Path</p>
+            <h2 style={{
+              fontFamily: HOME_FONTS.heading, fontSize: 'clamp(1.4rem, 3vw, 2rem)',
+              fontWeight: 700, color: t.textPrimary, lineHeight: 1.2,
+            }}>Self-host for free, or let us run it for you.</h2>
+          </div>
+        </HomeReveal>
+
+        <div className="grid-2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
+          <HomeReveal delay={0.05}>
+            <div style={{
+              padding: '2rem 1.75rem', borderRadius: 14, height: '100%',
+              background: t.cardBg, border: `1px solid ${t.cardBorder}`,
+              display: 'flex', flexDirection: 'column',
+            }}>
+              <div style={{
+                display: 'inline-flex', alignSelf: 'flex-start', padding: '0.25rem 0.75rem',
+                borderRadius: 6, fontSize: '0.7rem', fontWeight: 700,
+                textTransform: 'uppercase', letterSpacing: '0.08em',
+                background: isDark ? 'rgba(62,207,142,0.1)' : '#f0fdf4',
+                color: t.accent, marginBottom: '1rem',
+              }}>Free forever</div>
+              <h3 style={{
+                fontFamily: HOME_FONTS.heading, fontSize: '1.25rem', fontWeight: 700,
+                color: t.textPrimary, marginBottom: '0.5rem',
+              }}>Self-Host</h3>
+              <p style={{
+                fontFamily: HOME_FONTS.body, fontSize: '0.9rem', color: t.textSecondary,
+                lineHeight: 1.65, marginBottom: '1.25rem',
+              }}>
+                Clone the repo, run <code style={{
+                  fontFamily: HOME_FONTS.mono, fontSize: '0.8rem', padding: '0.15rem 0.4rem',
+                  borderRadius: 4, background: isDark ? 'rgba(255,255,255,0.06)' : '#f1f5f9',
+                }}>docker compose up</code>, and you're live. Full control, full privacy.
+              </p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', flex: 1 }}>
+                {[
+                  'Complete platform — every feature',
+                  'Your server, your data, your rules',
+                  'Bring your own AI key (OpenAI / Anthropic)',
+                  'Community support via GitHub',
+                ].map((item, i) => (
+                  <div key={i} style={{
+                    display: 'flex', alignItems: 'flex-start', gap: 8,
+                    fontSize: '0.825rem', color: t.textSecondary, fontFamily: HOME_FONTS.body,
+                  }}>
+                    <span style={{ color: t.accent, fontWeight: 700, flexShrink: 0, marginTop: 1 }}>✓</span>
+                    {item}
+                  </div>
+                ))}
+              </div>
+              <a href="https://github.com/warlock20/investment-checklist" target="_blank" rel="noopener" style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                padding: '0.7rem 1.5rem', marginTop: '1.5rem',
+                border: `1px solid ${t.cardBorder}`, borderRadius: 10,
+                color: t.textPrimary, fontWeight: 600, fontSize: '0.9rem',
+                textDecoration: 'none', fontFamily: HOME_FONTS.body,
+              }}>
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>
+                Clone the Repo
+              </a>
+            </div>
+          </HomeReveal>
+
+          <HomeReveal delay={0.12}>
+            <div style={{
+              padding: '2rem 1.75rem', borderRadius: 14, height: '100%',
+              background: isDark ? 'rgba(62,207,142,0.04)' : '#fafffe',
+              border: `2px solid ${t.accent}`,
+              display: 'flex', flexDirection: 'column',
+            }}>
+              <div style={{
+                display: 'inline-flex', alignSelf: 'flex-start', padding: '0.25rem 0.75rem',
+                borderRadius: 6, fontSize: '0.7rem', fontWeight: 700,
+                textTransform: 'uppercase', letterSpacing: '0.08em',
+                background: t.accent, color: t.accentText, marginBottom: '1rem',
+              }}>White-glove</div>
+              <h3 style={{
+                fontFamily: HOME_FONTS.heading, fontSize: '1.25rem', fontWeight: 700,
+                color: t.textPrimary, marginBottom: '0.5rem',
+              }}>We Host It For You</h3>
+              <p style={{
+                fontFamily: HOME_FONTS.body, fontSize: '0.9rem', color: t.textSecondary,
+                lineHeight: 1.65, marginBottom: '1.25rem',
+              }}>
+                Love the tool but don't want to run a server? We'll set it up, keep it updated, and manage the AI layer — so you just do research.
+              </p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', flex: 1 }}>
+                {[
+                  'Managed infrastructure — zero DevOps',
+                  'AI tuned and maintained (no key juggling)',
+                  'Direct support from the maintainer',
+                  'Automatic updates and backups',
+                ].map((item, i) => (
+                  <div key={i} style={{
+                    display: 'flex', alignItems: 'flex-start', gap: 8,
+                    fontSize: '0.825rem', color: t.textSecondary, fontFamily: HOME_FONTS.body,
+                  }}>
+                    <span style={{ color: t.accent, fontWeight: 700, flexShrink: 0, marginTop: 1 }}>✓</span>
+                    {item}
+                  </div>
+                ))}
+              </div>
+              <a href="mailto:hello@startwitha.xyz" style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                padding: '0.7rem 1.5rem', marginTop: '1.5rem',
+                background: t.accent, borderRadius: 10,
+                color: t.accentText, fontWeight: 600, fontSize: '0.9rem',
+                textDecoration: 'none', fontFamily: HOME_FONTS.body,
+                boxShadow: `0 2px 12px ${t.accent}30`,
+              }}>
+                Get In Touch →
+              </a>
+            </div>
+          </HomeReveal>
+        </div>
+
+        <HomeReveal delay={0.2}>
+          <p style={{
+            textAlign: 'center', fontFamily: HOME_FONTS.body, fontSize: '0.8rem',
+            color: t.textFaint, marginTop: '1.5rem', lineHeight: 1.6,
+          }}>
+            Same codebase. Same features. No lock-in — export your data anytime.
+          </p>
+        </HomeReveal>
+      </div>
+    </section>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════
+   QUICKSTART
+   ═══════════════════════════════════════════════════════════ */
+function OssQuickstart({ t }) {
+  const isDark = t === HOME_THEMES.dark;
+  const codeBg = isDark ? '#0a0e14' : '#1e293b';
+  const steps = [
+    { cmd: 'git clone https://github.com/warlock20/investment-checklist.git' },
+    { cmd: 'cd investment-checklist' },
+    { cmd: 'cp .env.example .env' },
+    { cmd: 'docker compose up -d' },
+  ];
+  return (
+    <section className="section-pad" style={{ background: t.sectionBg, padding: '4rem 2rem' }}>
+      <div style={{ maxWidth: 640, margin: '0 auto' }}>
+        <HomeReveal>
+          <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
+            <p style={{
+              fontFamily: HOME_FONTS.body, fontSize: '0.8rem', fontWeight: 600,
+              letterSpacing: '0.1em', textTransform: 'uppercase', color: t.accent, marginBottom: '0.6rem',
+            }}>Get Running in Minutes</p>
+            <h2 style={{
+              fontFamily: HOME_FONTS.heading, fontSize: 'clamp(1.2rem, 2.5vw, 1.75rem)',
+              fontWeight: 700, color: t.textPrimary, lineHeight: 1.2,
+            }}>One command. Full platform.</h2>
+          </div>
+        </HomeReveal>
+        <HomeReveal delay={0.1}>
+          <div style={{
+            background: codeBg, borderRadius: 14, overflow: 'hidden',
+            boxShadow: isDark ? '0 16px 48px rgba(0,0,0,0.4)' : '0 16px 48px rgba(0,0,0,0.15)',
+          }}>
+            <div style={{
+              padding: '10px 16px', borderBottom: '1px solid rgba(255,255,255,0.06)',
+              display: 'flex', alignItems: 'center', gap: 8,
+            }}>
+              <div style={{ display: 'flex', gap: 6 }}>
+                {['#ff5f57','#febd2e','#28c840'].map(c => (
+                  <div key={c} style={{ width: 10, height: 10, borderRadius: '50%', background: c, opacity: 0.8 }}></div>
+                ))}
+              </div>
+              <span style={{ flex: 1, textAlign: 'center', fontSize: 11, color: 'rgba(255,255,255,0.3)', fontFamily: HOME_FONTS.mono }}>terminal</span>
+            </div>
+            <div style={{ padding: '18px 22px', overflowX: 'auto' }}>
+              {steps.map((step, i) => (
+                <div key={i} style={{ marginBottom: i < steps.length - 1 ? 6 : 0 }}>
+                  <div style={{ fontFamily: HOME_FONTS.mono, fontSize: '0.8rem', color: '#e2e8f0', display: 'flex', alignItems: 'center', gap: 8, whiteSpace: 'nowrap' }}>
+                    <span style={{ color: isDark ? '#3ecf8e' : '#4ade80' }}>$</span>
+                    <span>{step.cmd}</span>
+                  </div>
+                </div>
+              ))}
+              <div style={{
+                marginTop: 14, paddingTop: 12, borderTop: '1px solid rgba(255,255,255,0.06)',
+                fontFamily: HOME_FONTS.mono, fontSize: '0.75rem', color: '#4ade80',
+              }}>
+                ✓ Running at localhost:5000
+              </div>
+            </div>
+          </div>
+        </HomeReveal>
+
+        <HomeReveal delay={0.18}>
+          <p style={{
+            textAlign: 'center', fontFamily: HOME_FONTS.body, fontSize: '0.9rem',
+            color: t.textSecondary, marginTop: '1.25rem',
+          }}>
+            That's it. Open <code style={{
+              fontFamily: HOME_FONTS.mono, fontSize: '0.8rem', padding: '0.15rem 0.4rem',
+              borderRadius: 4, background: isDark ? 'rgba(255,255,255,0.06)' : '#f1f5f9',
+            }}>localhost:5000</code> and start researching.
+          </p>
+          <div style={{
+            display: 'flex', gap: '1rem', justifyContent: 'center', marginTop: '0.75rem',
+            fontSize: '0.85rem', fontFamily: HOME_FONTS.body,
+          }}>
+            <a href="#" style={{ color: t.accent, textDecoration: 'none', fontWeight: 600 }}>Read the docs →</a>
+            <a href="https://github.com/warlock20/investment-checklist" target="_blank" rel="noopener" style={{ color: t.accent, textDecoration: 'none', fontWeight: 600 }}>View on GitHub →</a>
+          </div>
+        </HomeReveal>
+      </div>
+    </section>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════
+   FINAL CTA
+   ═══════════════════════════════════════════════════════════ */
+function OssCta({ t }) {
+  return (
+    <section className="section-pad" style={{ background: t.ctaBg, padding: '5rem 2rem', textAlign: 'center' }}>
+      <HomeReveal>
+        <div style={{ maxWidth: 560, margin: '0 auto' }}>
+          <h2 style={{
+            fontFamily: HOME_FONTS.heading, fontSize: 'clamp(1.5rem, 3vw, 2.25rem)',
+            fontWeight: 700, color: '#fff', marginBottom: '0.6rem',
+          }}>Ready to start with the A's?</h2>
+          <p style={{
+            fontFamily: HOME_FONTS.body, fontSize: '1rem', color: 'rgba(255,255,255,0.5)',
+            marginBottom: '2rem', lineHeight: 1.6,
+          }}>Join investors who think systematically about every decision. No shortcuts.</p>
+          <div className="cta-buttons" style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+            <a href="#" style={{
+              display: 'inline-flex', alignItems: 'center', gap: 8,
+              padding: '0.8rem 2.25rem', background: t.accent, color: t.accentText,
+              borderRadius: 10, fontWeight: 600, fontSize: '1rem', textDecoration: 'none',
+              fontFamily: HOME_FONTS.body,
+            }}>Get Started</a>
+            <a href="https://github.com/warlock20/investment-checklist" target="_blank" rel="noopener" style={{
+              display: 'inline-flex', alignItems: 'center', gap: 8,
+              padding: '0.8rem 1.75rem',
+              border: '1px solid rgba(255,255,255,0.2)', borderRadius: 10,
+              color: 'rgba(255,255,255,0.7)', fontWeight: 500, fontSize: '1rem',
+              textDecoration: 'none', fontFamily: HOME_FONTS.body,
+            }}>Star on GitHub ⭐</a>
+          </div>
+        </div>
+      </HomeReveal>
+    </section>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════
+   FOOTER
+   ═══════════════════════════════════════════════════════════ */
+function OssFooter({ t }) {
+  return (
+    <footer style={{
+      background: t.footerBg, padding: '2rem 2rem',
+      fontFamily: HOME_FONTS.body, color: 'rgba(255,255,255,0.35)',
+      borderTop: '1px solid rgba(255,255,255,0.05)',
+    }}>
+      <div className="footer-layout" style={{
+        maxWidth: 860, margin: '0 auto',
+        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+      }}>
+        <div>
+          <div style={{ fontFamily: HOME_FONTS.heading, fontWeight: 700, fontSize: '0.95rem', color: 'rgba(255,255,255,0.5)', marginBottom: '0.25rem' }}>Start with A</div>
+          <div style={{ fontSize: '0.75rem' }}>Open-source systematic investment research</div>
+        </div>
+        <div style={{ display: 'flex', gap: '1.25rem', alignItems: 'center' }}>
+          <a href="https://github.com/warlock20/investment-checklist" target="_blank" rel="noopener" style={{ color: 'rgba(255,255,255,0.4)', textDecoration: 'none', fontSize: '0.8rem' }}>GitHub</a>
+          <a href="https://reddit.com/r/ValueInvesting" target="_blank" rel="noopener" style={{ color: 'rgba(255,255,255,0.4)', textDecoration: 'none', fontSize: '0.8rem' }}>Reddit</a>
+          <a href="mailto:hello@startwitha.xyz" style={{ color: 'rgba(255,255,255,0.4)', textDecoration: 'none', fontSize: '0.8rem' }}>Email</a>
+        </div>
+        <div style={{ textAlign: 'right', fontSize: '0.75rem' }}>
+          AGPL-3.0 License · Made in Germany
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════
+   APP ROOT
+   ═══════════════════════════════════════════════════════════ */
+function OssApp() {
+  const [themeKey, setTheme] = useState(() => localStorage.getItem('swa-oss-theme') || 'dark');
+  useEffect(() => { localStorage.setItem('swa-oss-theme', themeKey); }, [themeKey]);
+  const t = HOME_THEMES[themeKey];
+
+  const themes = Object.entries(HOME_THEMES).map(([k, v]) => ({ key: k, name: v.name }));
+
+  return (
+    <div style={{ background: t.sectionBg, minHeight: '100vh' }}>
+      {/* Theme switcher */}
+      <div style={{
+        position: 'fixed', bottom: 20, right: 20, zIndex: 200,
+        display: 'flex', gap: 4, padding: 4, borderRadius: 10,
+        background: t === HOME_THEMES.dark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)',
+        backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)',
+        border: `1px solid ${t.cardBorder}`,
+      }}>
+        {themes.map(th => (
+          <button key={th.key} onClick={() => setTheme(th.key)} style={{
+            padding: '6px 12px', borderRadius: 7, border: 'none', cursor: 'pointer',
+            fontSize: '0.7rem', fontWeight: 600, fontFamily: HOME_FONTS.body,
+            background: themeKey === th.key ? t.accent : 'transparent',
+            color: themeKey === th.key ? t.accentText : t.textSecondary,
+            transition: 'all 0.2s',
+          }}>{th.name}</button>
+        ))}
+      </div>
+
+      <OssNav t={t} />
+      <OssHero t={t} />
+      <OssPhilosophy t={t} />
+
+      <div id="platform">
+        <HomePreview t={t} />
+      </div>
+
+      <OssFeatures t={t} />
+      <OssMethod t={t} />
+      <OssPrivacy t={t} />
+      <OssHosting t={t} />
+      <OssQuickstart t={t} />
+      <OssCta t={t} />
+      <OssFooter t={t} />
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<OssApp />);
+  </script>
+</body>
+</html>
