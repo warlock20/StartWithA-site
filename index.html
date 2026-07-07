@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Start with A — Open-Source Investment Research Platform</title>
-  <meta name="description" content="A systematic, open-source investment research platform inspired by Buffett's method. Self-hostable, privacy-first, charge it with your favorite AI models. Stop chasing stock tips — start building a framework.">
+  <meta name="description" content="A systematic, open-source investment research platform inspired by Buffett's method. Self-hostable, privacy-first, powered by the AI model of your choice. Stop chasing stock tips — start building a framework.">
   <meta name="keywords" content="investment research, value investing, open source, self-hosted, stock analysis, Warren Buffett, systematic investing, research framework">
   <meta name="author" content="Start with A">
   <meta name="robots" content="index, follow">
@@ -83,10 +83,10 @@
 <body>
   <div id="root"></div>
 
-  <!-- React Production -->
-  <script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js" crossorigin="anonymous"></script>
-  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js" crossorigin="anonymous"></script>
-  <script src="https://unpkg.com/@babel/standalone@7.26.10/babel.min.js" crossorigin="anonymous"></script>
+  <!-- React Production (self-hosted — no requests to unpkg.com) -->
+  <script src="vendor/react.production.min.js"></script>
+  <script src="vendor/react-dom.production.min.js"></script>
+  <script src="vendor/babel.min.js"></script>
 
   <script type="text/babel">
 /* ═══════════════════════════════════════════════════════════
@@ -302,7 +302,7 @@ function OssHero({ t }) {
             fontFamily: HOME_FONTS.body, fontSize: '1.125rem',
             lineHeight: 1.7, color: t.heroMuted, maxWidth: 560, margin: '0 auto 2rem',
           }}>
-            A systematic research process that turns scattered notes and gut feelings into disciplined investment decisions. Self-hosted, privacy-first, chargeable with your favorite AI models — like a personal research assistant that actually knows your data.
+            A systematic research process that turns scattered notes and gut feelings into disciplined investment decisions. Self-hosted, privacy-first, powered by the AI model of your choice — like a personal research assistant that actually knows your data.
           </p>
         </HomeReveal>
 
@@ -749,6 +749,9 @@ function KnowledgeMockup({ t }) {
           </div>
         ))}
       </div>
+      <div style={{ padding: '6px 12px', borderTop: `1px solid ${app.border}`, textAlign: 'center', fontSize: 9, color: app.faint, fontStyle: 'italic' }}>
+        Illustrative example — sample data, not real analysis
+      </div>
     </div>
   );
 }
@@ -853,6 +856,9 @@ function ArgosMockup({ t }) {
           })}
         </div>
       </div>
+      <div style={{ padding: '6px 12px', borderTop: `1px solid ${app.border}`, textAlign: 'center', fontSize: 9, color: app.faint, fontStyle: 'italic' }}>
+        Illustrative example — sample data, not real analysis
+      </div>
     </div>
   );
 }
@@ -883,7 +889,7 @@ function HomePreview({ t }) {
             }}>Not just screening. A complete research system.</h2>
             <p style={{
               fontFamily: HOME_FONTS.body, fontSize: '0.95rem', color: t.textSecondary, maxWidth: 520, margin: '0 auto',
-            }}>From first glance to investment thesis — every step is tracked, structured, and chargeable with your favorite AI models.</p>
+            }}>From first glance to investment thesis — every step is tracked, structured, and powered by the AI model of your choice.</p>
           </div>
         </HomeReveal>
 
@@ -932,7 +938,7 @@ function HomePreview({ t }) {
 function OssFeatures({ t }) {
   const features = [
     { icon: 'bi-grid-3x3-gap', title: 'Market Sweep', desc: 'Systematically review every company in a market, A to Z. No cherry-picking, no blind spots.' },
-    { icon: 'bi-list-check', title: 'Custom Checklists', desc: 'Build your own research framework. Ask the same rigorous questions for every company, every time.' },
+    { icon: 'bi-list-check', title: 'Custom Checklists', desc: 'Build your own research framework and checklist. Ask the same rigorous questions for every company, every time.' },
     { icon: 'bi-shield-check', title: 'Argos AI Assistant', desc: 'Your AI co-pilot reviews your research history, spots patterns, and warns you before you repeat past mistakes. Bring your own API key.' },
     { icon: 'bi-book', title: 'Knowledge Hub', desc: 'Curated notes, sector insights, and research findings — all searchable, all tagged. Your institutional memory, compounding over time.' },
     { icon: 'bi-funnel', title: 'Investment Pipeline', desc: 'Track every company from "first glance" to "investment thesis" through a structured pipeline. Know exactly where every idea stands.' },
@@ -1021,7 +1027,7 @@ function OssMethod({ t }) {
                 fontFamily: HOME_FONTS.body, fontSize: '0.95rem', color: t.textSecondary,
                 lineHeight: 1.7, margin: '1.25rem 0 0',
               }}>
-                Not because he was just smarter (and God). Because he was willing to do the work nobody else would.
+                Not because he was smarter than everyone else. Because he was willing to do the work nobody else would.
               </p>
               <p style={{
                 fontFamily: HOME_FONTS.body, fontSize: '0.95rem', color: t.textSecondary,
@@ -1411,6 +1417,9 @@ function PrivacyModal({ open, onClose, t }) {
           </h3>
           <p>
             Verantwortlich f&uuml;r diese Website im Sinne der DSGVO:<br />
+            [TODO: Vor- und Nachname]<br />
+            [TODO: Stra&szlig;e und Hausnummer]<br />
+            [TODO: PLZ und Ort]<br />
             E-Mail: <a href="mailto:hello@startwitha.xyz" style={{ color: t.accent }}>hello@startwitha.xyz</a>
           </p>
 
@@ -1429,6 +1438,9 @@ function PrivacyModal({ open, onClose, t }) {
           </p>
           <p style={{ marginTop: '0.5rem' }}>
             <strong>Schriftarten (Fonts)</strong> &mdash; Die auf dieser Website verwendeten Schriftarten (Poppins, Inter, JetBrains Mono) werden lokal von unserem Server geladen. Es findet keine Verbindung zu Google-Servern statt.
+          </p>
+          <p style={{ marginTop: '0.5rem' }}>
+            <strong>JavaScript-Bibliotheken</strong> &mdash; Die verwendeten Bibliotheken (React, Babel) werden ebenfalls lokal von unserem Server geladen. Es findet keine Verbindung zu unpkg.com oder anderen Drittanbietern statt.
           </p>
 
           <h3 style={{ fontFamily: HOME_FONTS.heading, fontSize: '1rem', fontWeight: 600, color: t.textPrimary, marginTop: '1.25rem', marginBottom: '0.5rem' }}>
@@ -1458,9 +1470,74 @@ function PrivacyModal({ open, onClose, t }) {
 }
 
 /* ═══════════════════════════════════════════════════════════
+   IMPRESSUM MODAL
+   ═══════════════════════════════════════════════════════════ */
+function ImpressumModal({ open, onClose, t }) {
+  if (!open) return null;
+  return (
+    <div onClick={onClose} style={{
+      position: 'fixed', inset: 0, zIndex: 200,
+      background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      padding: '2rem',
+    }}>
+      <div onClick={e => e.stopPropagation()} style={{
+        background: '#fff', borderRadius: 16, maxWidth: 540, width: '100%',
+        maxHeight: '80vh', overflow: 'auto', padding: '2.5rem',
+        boxShadow: '0 24px 64px rgba(0,0,0,0.2)',
+      }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+          <h2 style={{ fontFamily: HOME_FONTS.heading, fontSize: '1.5rem', fontWeight: 700, color: t.textPrimary }}>
+            Impressum
+          </h2>
+          <button onClick={onClose} style={{
+            background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer',
+            color: t.textSecondary, padding: 4, lineHeight: 1,
+          }}>&times;</button>
+        </div>
+
+        <div style={{ fontFamily: HOME_FONTS.body, fontSize: '0.875rem', color: t.textSecondary, lineHeight: 1.8 }}>
+          <h3 style={{ fontFamily: HOME_FONTS.heading, fontSize: '1rem', fontWeight: 600, color: t.textPrimary, marginBottom: '0.5rem' }}>
+            Angaben gem&auml;&szlig; &sect; 5 DDG
+          </h3>
+          <p>
+            Kiran Mathews<br />
+            Johann-Straße-Weg 2<br />
+            71101 Schönaich<br />
+            Deutschland
+          </p>
+
+          <h3 style={{ fontFamily: HOME_FONTS.heading, fontSize: '1rem', fontWeight: 600, color: t.textPrimary, marginTop: '1.25rem', marginBottom: '0.5rem' }}>
+            Kontakt
+          </h3>
+          <p>
+            E-Mail: <a href="mailto:hello@startwitha.xyz" style={{ color: t.accent }}>hello@startwitha.xyz</a>
+          </p>
+
+          <h3 style={{ fontFamily: HOME_FONTS.heading, fontSize: '1rem', fontWeight: 600, color: t.textPrimary, marginTop: '1.25rem', marginBottom: '0.5rem' }}>
+            Verantwortlich f&uuml;r den Inhalt
+          </h3>
+          <p>
+            [TODO: Vor- und Nachname]<br />
+            Anschrift wie oben
+          </p>
+
+          <h3 style={{ fontFamily: HOME_FONTS.heading, fontSize: '1rem', fontWeight: 600, color: t.textPrimary, marginTop: '1.25rem', marginBottom: '0.5rem' }}>
+            Haftungsausschluss
+          </h3>
+          <p>
+            Start with A ist ein pers&ouml;nliches Recherchetool zu Informations- und Bildungszwecken. Es stellt keine Anlageberatung, Finanzberatung oder Empfehlung zum Kauf oder Verkauf von Wertpapieren dar. Alle Anlageentscheidungen liegen in Ihrer alleinigen Verantwortung.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════
    FOOTER
    ═══════════════════════════════════════════════════════════ */
-function OssFooter({ t, onOpenPrivacy }) {
+function OssFooter({ t, onOpenPrivacy, onOpenImpressum }) {
   return (
     <footer style={{
       background: t.footerBg, padding: '2rem 2rem',
@@ -1479,6 +1556,7 @@ function OssFooter({ t, onOpenPrivacy }) {
           <a href="https://github.com/warlock20/StartWithA" target="_blank" rel="noopener" style={{ color: 'rgba(255,255,255,0.4)', textDecoration: 'none', fontSize: '0.8rem' }}>GitHub</a>
           <a href="https://reddit.com/r/ValueInvesting" target="_blank" rel="noopener" style={{ color: 'rgba(255,255,255,0.4)', textDecoration: 'none', fontSize: '0.8rem' }}>Reddit</a>
           <a href="mailto:hello@startwitha.xyz" style={{ color: 'rgba(255,255,255,0.4)', textDecoration: 'none', fontSize: '0.8rem' }}>Email</a>
+          <a href="#" onClick={e => { e.preventDefault(); onOpenImpressum(); }} style={{ color: 'rgba(255,255,255,0.4)', textDecoration: 'none', fontSize: '0.8rem' }}>Impressum</a>
           <a href="#" onClick={e => { e.preventDefault(); onOpenPrivacy(); }} style={{ color: 'rgba(255,255,255,0.4)', textDecoration: 'none', fontSize: '0.8rem' }}>Datenschutz</a>
         </div>
         <div style={{ textAlign: 'right', fontSize: '0.75rem' }}>
@@ -1502,6 +1580,7 @@ function OssFooter({ t, onOpenPrivacy }) {
 function OssApp() {
   const t = HOME_THEME;
   const [privacyOpen, setPrivacyOpen] = useState(false);
+  const [impressumOpen, setImpressumOpen] = useState(false);
 
   return (
     <div style={{ background: t.sectionBg, minHeight: '100vh' }}>
@@ -1519,8 +1598,9 @@ function OssApp() {
       <OssHosting t={t} />
       <OssQuickstart t={t} />
       <OssCta t={t} />
-      <OssFooter t={t} onOpenPrivacy={() => setPrivacyOpen(true)} />
+      <OssFooter t={t} onOpenPrivacy={() => setPrivacyOpen(true)} onOpenImpressum={() => setImpressumOpen(true)} />
       <PrivacyModal open={privacyOpen} onClose={() => setPrivacyOpen(false)} t={t} />
+      <ImpressumModal open={impressumOpen} onClose={() => setImpressumOpen(false)} t={t} />
     </div>
   );
 }
