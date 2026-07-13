@@ -1219,6 +1219,7 @@ function OssHosting({ t }) {
                 {[
                   'Report bugs and request features on GitHub',
                   'Contribute code, docs, or translations',
+                  'Join the discussion forum on GitHub',
                   'Join the discussion on Reddit',
                   'Reach the maintainer by email',
                 ].map((item, i) => (
@@ -1231,15 +1232,26 @@ function OssHosting({ t }) {
                   </div>
                 ))}
               </div>
-              <a href="mailto:hello@startwitha.xyz" style={{
-                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-                padding: '0.7rem 1.5rem', marginTop: '1.5rem',
-                border: `1px solid ${t.cardBorder}`, borderRadius: 10,
-                color: t.textPrimary, fontWeight: 600, fontSize: '0.9rem',
-                textDecoration: 'none', fontFamily: HOME_FONTS.body,
-              }}>
-                Say Hello →
-              </a>
+              <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1.5rem' }}>
+                <a href="https://github.com/warlock20/StartWithA/discussions/292" target="_blank" rel="noopener" style={{
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                  flex: 1, padding: '0.7rem 1.5rem',
+                  background: t.accent, borderRadius: 10,
+                  color: t.accentText, fontWeight: 600, fontSize: '0.9rem',
+                  textDecoration: 'none', fontFamily: HOME_FONTS.body,
+                }}>
+                  Join the Discussion
+                </a>
+                <a href="mailto:hello@startwitha.xyz" style={{
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                  flex: 1, padding: '0.7rem 1.5rem',
+                  border: `1px solid ${t.cardBorder}`, borderRadius: 10,
+                  color: t.textPrimary, fontWeight: 600, fontSize: '0.9rem',
+                  textDecoration: 'none', fontFamily: HOME_FONTS.body,
+                }}>
+                  Say Hello →
+                </a>
+              </div>
             </div>
           </HomeReveal>
         </div>
