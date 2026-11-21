@@ -460,6 +460,13 @@ function readSharedScore() {
     return n >= 0 && n <= MAX_SCORE ? n : null;
   } catch (e) { return null; }
 }
+function readPreselectedQ1() {
+  try {
+    const raw = new URLSearchParams(window.location.search).get('q1');
+    if (raw === null || !/^[0-2]$/.test(raw)) return null;
+    return parseInt(raw, 10);
+  } catch (e) { return null; }
+}
 function clearSharedParam() {
   try { window.history.replaceState(null, '', window.location.pathname + window.location.hash); } catch (e) {}
 }
@@ -688,13 +695,28 @@ function ResultScreen({ score, checklistType, shared, onRetake }) {
    ═══════════════════════════════════════════════════════════ */
 function QuizApp() {
   const [sharedScore] = useState(readSharedScore);
+  const [preselectedQ1] = useState(() => (sharedScore !== null ? null : readPreselectedQ1()));
   // step: 'intro' | 0..6 (question index) | 'result'
-  const [step, setStep] = useState(sharedScore !== null ? 'result' : 'intro');
-  const [answers, setAnswers] = useState(() => Array(QUESTIONS.length).fill(null));
+  const [step, setStep] = useState(() => {
+    if (sharedScore !== null) return 'result';
+    if (preselectedQ1 !== null) return 1;
+    return 'intro';
+  });
+  const [answers, setAnswers] = useState(() => {
+    const arr = Array(QUESTIONS.length).fill(null);
+    if (preselectedQ1 !== null) arr[0] = preselectedQ1;
+    return arr;
+  });
   const [isShared, setIsShared] = useState(sharedScore !== null);
-  const [runs, setRuns] = useState(0);
+  const [runs, setRuns] = useState(preselectedQ1 !== null ? 1 : 0);
   const timerRef = useRef(null);
 
+  useEffect(() => {
+    if (preselectedQ1 !== null) {
+      clearSharedParam();
+      track('quiz_started', { retake: false, source: 'homepage_teaser' });
+    }
+  }, [preselectedQ1]);
   useEffect(() => () => clearTimeout(timerRef.current), []);
   useEffect(() => { window.scrollTo(0, 0); }, [step]);
 

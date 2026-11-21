@@ -78,6 +78,30 @@
       .cta-buttons { flex-direction: column !important; align-items: center !important; }
       .cta-buttons a { width: 100% !important; text-align: center !important; justify-content: center !important; }
     }
+
+    /* ── Quiz promos ── */
+    .quiz-chip { transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s; }
+    .quiz-chip:hover { border-color: #2d6a4f !important; box-shadow: 0 6px 20px rgba(45,106,79,0.14); transform: translateY(-1px); }
+    .quiz-chip:hover .quiz-chip-arrow { transform: translateX(3px); }
+    .quiz-chip-arrow { transition: transform 0.2s; }
+    .quiz-nav-link { transition: background 0.2s, border-color 0.2s; }
+    .quiz-nav-link:hover { background: rgba(45,106,79,0.08) !important; border-color: #2d6a4f !important; }
+    .quiz-opt { transition: border-color 0.15s, background 0.15s, transform 0.15s, box-shadow 0.15s; }
+    .quiz-opt:hover { border-color: #40916c !important; background: rgba(45,106,79,0.04) !important; transform: translateY(-1px); box-shadow: 0 4px 14px rgba(15,23,42,0.06); }
+    .quiz-opt:hover .quiz-opt-key { background: #2d6a4f !important; color: #fff !important; }
+    .quiz-nudge { animation: quizNudgeIn 0.45s cubic-bezier(.2,.7,.2,1) both; }
+    @keyframes quizNudgeIn { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
+    .quiz-nudge-close:hover { background: rgba(15,23,42,0.06) !important; color: #0f172a !important; }
+    .quiz-pulse { animation: quizPulse 2.4s ease-out infinite; }
+    @keyframes quizPulse { 0% { box-shadow: 0 0 0 0 rgba(45,106,79,0.45); } 70% { box-shadow: 0 0 0 8px rgba(45,106,79,0); } 100% { box-shadow: 0 0 0 0 rgba(45,106,79,0); } }
+    @media (max-width: 600px) {
+      .quiz-nudge { left: 12px !important; right: 12px !important; bottom: 12px !important; width: auto !important; }
+      .quiz-chip { border-radius: 14px !important; text-align: left; }
+      .quiz-chip-sub { display: block !important; margin-left: 0 !important; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .quiz-nudge, .quiz-pulse { animation: none; }
+    }
   </style>
 </head>
 <body>
@@ -219,6 +243,16 @@ function OssNav({ t }) {
             GitHub
             <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M3.5 1.5h7m0 0v7m0-7L1.5 10.5"></path></svg>
           </a>
+          <a href="quiz/" className="quiz-nav-link" style={{
+            padding: '0.4rem 0.85rem', borderRadius: 99,
+            border: `1px solid rgba(45,106,79,0.28)`, background: t.accentSoft,
+            color: t.accent, fontSize: '0.825rem', fontWeight: 600,
+            textDecoration: 'none', fontFamily: HOME_FONTS.body,
+            display: 'inline-flex', alignItems: 'center', gap: 6,
+          }}>
+            <i className="bi bi-ui-checks-grid" style={{ fontSize: '0.8rem' }}></i>
+            Is It for You?
+          </a>
           <a href="#self-host" style={{
             padding: '0.5rem 1.2rem', background: t.accent, color: t.accentText,
             borderRadius: 8, fontSize: '0.875rem', fontWeight: 600, textDecoration: 'none',
@@ -251,6 +285,15 @@ function OssNav({ t }) {
               borderBottom: `1px solid ${t.cardBorder}`,
             }}>{link.label}</a>
           ))}
+          <a href="quiz/" onClick={handleNavClick} style={{
+            color: t.accent, textDecoration: 'none', fontSize: '1.125rem',
+            fontFamily: HOME_FONTS.body, fontWeight: 600, padding: '0.5rem 0',
+            borderBottom: `1px solid ${t.cardBorder}`,
+            display: 'flex', alignItems: 'center', gap: 8,
+          }}>
+            <i className="bi bi-ui-checks-grid"></i>
+            Is It for You? (60s Quiz)
+          </a>
           <a href="https://github.com/warlock20/StartWithA" target="_blank" rel="noopener" onClick={handleNavClick} style={{
             color: t.textPrimary, textDecoration: 'none', fontSize: '1.125rem',
             fontFamily: HOME_FONTS.body, fontWeight: 600, padding: '0.5rem 0',
@@ -323,10 +366,30 @@ function OssHero({ t }) {
               View on GitHub
             </a>
           </div>
-          <p style={{ marginTop: '1.25rem', fontFamily: HOME_FONTS.body, fontSize: '0.9rem', color: t.heroMuted }}>
-            Not sure it fits how you invest?{' '}
-            <a href="quiz/" style={{ color: t.accent, fontWeight: 600, textDecoration: 'none' }}>Take the 60-second quiz →</a>
-          </p>
+          <div style={{ marginTop: '1.5rem', display: 'flex', justifyContent: 'center' }}>
+            <a href="quiz/" className="quiz-chip" style={{
+              display: 'inline-flex', alignItems: 'center', gap: '0.75rem',
+              padding: '0.7rem 1.15rem', borderRadius: 99,
+              background: t.philosophyBg, border: `1px solid rgba(45,106,79,0.28)`,
+              textDecoration: 'none', fontFamily: HOME_FONTS.body,
+              boxShadow: '0 2px 10px rgba(45,106,79,0.08)',
+            }}>
+              <span className="quiz-pulse" style={{
+                width: 8, height: 8, borderRadius: '50%', background: t.accent, flexShrink: 0,
+              }}></span>
+              <span style={{ fontSize: '0.9rem', color: t.philosophyText, lineHeight: 1.35 }}>
+                <strong style={{ fontWeight: 700 }}>Is StartWithA right for you?</strong>
+                <span className="quiz-chip-sub" style={{ color: t.heroMuted, marginLeft: 6 }}>
+                  60-second check · we might tell you not to use it
+                </span>
+              </span>
+              <span className="quiz-chip-arrow" style={{
+                display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                width: 24, height: 24, borderRadius: '50%', background: t.accent, color: '#fff',
+                fontSize: '0.8rem', flexShrink: 0,
+              }}>→</span>
+            </a>
+          </div>
         </HomeReveal>
 
         <HomeReveal delay={0.32}>
@@ -1515,6 +1578,201 @@ function OssFooter({ t, onOpenPrivacy }) {
 }
 
 /* ═══════════════════════════════════════════════════════════
+   QUIZ TEASER — Inline Question 1 (jumps straight to Q2)
+   ═══════════════════════════════════════════════════════════ */
+function OssQuizTeaser({ t }) {
+  const options = [
+    { key: 'A', idx: 0, text: 'Social media, Reddit, FinTwit, or market news.' },
+    { key: 'B', idx: 1, text: 'Stock screeners, podcasts, or occasional 13F filings.' },
+    { key: 'C', idx: 2, text: 'Systematic screening, reading filings, or working through markets methodically (e.g., starting with the A’s).' },
+  ];
+
+  return (
+    <section id="fit-check" className="section-pad" style={{
+      background: t.philosophyBg, padding: '5rem 2rem',
+      borderTop: `1px solid ${t.cardBorder}`,
+      borderBottom: `1px solid ${t.cardBorder}`,
+    }}>
+      <div style={{ maxWidth: 660, margin: '0 auto' }}>
+        <HomeReveal>
+          <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+            <p style={{
+              fontFamily: HOME_FONTS.body, fontSize: '0.8rem', fontWeight: 600,
+              letterSpacing: '0.1em', textTransform: 'uppercase', color: t.accent, marginBottom: '0.6rem',
+            }}>Is StartWithA Right for You?</p>
+            <h2 style={{
+              fontFamily: HOME_FONTS.heading, fontSize: 'clamp(1.5rem, 3.2vw, 2.15rem)',
+              fontWeight: 700, color: t.textPrimary, lineHeight: 1.2, marginBottom: '0.6rem',
+            }}>Find out in 60 seconds — start here.</h2>
+            <p style={{
+              fontFamily: HOME_FONTS.body, fontSize: '0.95rem', color: t.textSecondary, lineHeight: 1.6,
+            }}>
+              Pick an answer below to kick off our 7-question fit check. No email gate — and we’ll tell you honestly if it’s not for you.
+            </p>
+          </div>
+        </HomeReveal>
+
+        <HomeReveal delay={0.08}>
+          <div style={{
+            background: t.cardBg, border: `1px solid ${t.cardBorder}`, borderRadius: 16,
+            padding: '1.75rem', boxShadow: '0 8px 32px rgba(15,23,42,0.06)',
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
+              <span style={{
+                fontFamily: HOME_FONTS.body, fontSize: '0.72rem', fontWeight: 700,
+                letterSpacing: '0.1em', textTransform: 'uppercase', color: t.accent,
+              }}>Idea Generation</span>
+              <span style={{
+                fontFamily: HOME_FONTS.body, fontSize: '0.78rem', fontWeight: 600, color: t.textFaint,
+              }}>Question 1 of 7</span>
+            </div>
+            <div style={{ height: 5, background: '#edf2f0', borderRadius: 99, overflow: 'hidden', marginBottom: '1.25rem' }}>
+              <div style={{ width: '14.3%', height: '100%', background: `linear-gradient(90deg, ${t.accent}, ${t.accentLight})`, borderRadius: 99 }}></div>
+            </div>
+
+            <h3 style={{
+              fontFamily: HOME_FONTS.heading, fontSize: 'clamp(1.1rem, 2.5vw, 1.3rem)',
+              fontWeight: 700, color: t.textPrimary, lineHeight: 1.3, marginBottom: '1.1rem',
+            }}>How do you usually find new companies to research?</h3>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+              {options.map(opt => (
+                <a
+                  key={opt.key}
+                  href={`quiz/?q1=${opt.idx}`}
+                  className="quiz-opt"
+                  style={{
+                    display: 'flex', alignItems: 'flex-start', gap: '0.85rem',
+                    padding: '0.9rem 1rem', borderRadius: 12,
+                    border: `1.5px solid ${t.cardBorder}`, background: '#fff',
+                    textDecoration: 'none', color: t.textPrimary,
+                    fontFamily: HOME_FONTS.body, fontSize: '0.94rem', lineHeight: 1.5,
+                  }}
+                >
+                  <span className="quiz-opt-key" style={{
+                    flexShrink: 0, width: 26, height: 26, borderRadius: 7, marginTop: -1,
+                    display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                    fontFamily: HOME_FONTS.mono, fontSize: '0.78rem', fontWeight: 700,
+                    background: '#f1f5f9', color: t.textSecondary, transition: 'background 0.15s, color 0.15s',
+                  }}>{opt.key}</span>
+                  <span style={{ flex: 1 }}>{opt.text}</span>
+                  <i className="bi bi-arrow-right" style={{ color: t.textFaint, fontSize: '0.95rem', marginTop: 2, flexShrink: 0 }}></i>
+                </a>
+              ))}
+            </div>
+
+            <div style={{
+              marginTop: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+              flexWrap: 'wrap', gap: '0.5rem', fontSize: '0.78rem', color: t.textFaint, fontFamily: HOME_FONTS.body,
+            }}>
+              <span><i className="bi bi-envelope-slash" style={{ color: t.accent, marginRight: 5 }}></i>No email required · instant result</span>
+              <a href="quiz/" style={{ color: t.accent, fontWeight: 600, textDecoration: 'none' }}>Open full quiz →</a>
+            </div>
+          </div>
+        </HomeReveal>
+      </div>
+    </section>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════
+   QUIZ POP-UP NUDGE — Non-intrusive bottom-right slide-up
+   Appears after 35% scroll or 14s, hides near #fit-check,
+   and stays dismissed for the session once closed.
+   ═══════════════════════════════════════════════════════════ */
+function QuizNudge({ t }) {
+  const [visible, setVisible] = useState(false);
+  const [dismissed, setDismissed] = useState(() => {
+    try { return sessionStorage.getItem('swa_quiz_nudge_dismissed') === '1'; } catch (e) { return false; }
+  });
+  const [teaserInView, setTeaserInView] = useState(false);
+
+  useEffect(() => {
+    if (dismissed) return;
+    const onScroll = () => {
+      const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+      if (scrollable > 0 && window.scrollY / scrollable >= 0.32) setVisible(true);
+    };
+    const timer = setTimeout(() => setVisible(true), 14000);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => { clearTimeout(timer); window.removeEventListener('scroll', onScroll); };
+  }, [dismissed]);
+
+  useEffect(() => {
+    const el = document.getElementById('fit-check');
+    if (!el || !('IntersectionObserver' in window)) return;
+    const obs = new IntersectionObserver(([e]) => setTeaserInView(e.isIntersecting), { threshold: 0.15 });
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+
+  const dismiss = () => {
+    setDismissed(true);
+    try { sessionStorage.setItem('swa_quiz_nudge_dismissed', '1'); } catch (e) {}
+  };
+
+  if (!visible || dismissed || teaserInView) return null;
+
+  return (
+    <aside
+      className="quiz-nudge"
+      role="dialog"
+      aria-label="StartWithA fit check quiz"
+      style={{
+        position: 'fixed', bottom: 20, right: 20, zIndex: 150, width: 340,
+        background: '#ffffff', border: `1px solid ${t.cardBorder}`, borderRadius: 16,
+        padding: '1.15rem 1.2rem 1.1rem',
+        boxShadow: '0 16px 48px rgba(15,23,42,0.16), 0 2px 8px rgba(15,23,42,0.06)',
+        fontFamily: HOME_FONTS.body,
+      }}
+    >
+      <button
+        type="button"
+        className="quiz-nudge-close"
+        onClick={dismiss}
+        aria-label="Dismiss quiz prompt"
+        style={{
+          position: 'absolute', top: 10, right: 10, width: 28, height: 28,
+          borderRadius: 8, border: 'none', background: 'transparent',
+          color: t.textFaint, cursor: 'pointer', fontSize: '1.1rem',
+          display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+          transition: 'background 0.15s, color 0.15s',
+        }}
+      >&times;</button>
+
+      <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: '0.45rem' }}>
+        <span className="quiz-pulse" style={{ width: 8, height: 8, borderRadius: '50%', background: t.accent }}></span>
+        <span style={{
+          fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.1em',
+          textTransform: 'uppercase', color: t.accent,
+        }}>60-second fit check</span>
+      </div>
+
+      <h3 style={{
+        fontFamily: HOME_FONTS.heading, fontSize: '1rem', fontWeight: 700,
+        color: t.textPrimary, lineHeight: 1.3, marginBottom: '0.4rem', paddingRight: 18,
+      }}>Is StartWithA actually for you?</h3>
+
+      <p style={{ fontSize: '0.84rem', color: t.textSecondary, lineHeight: 1.55, marginBottom: '0.9rem' }}>
+        7 quick questions, no email gate. If it doesn’t match how you invest, we’ll tell you upfront.
+      </p>
+
+      <a
+        href="quiz/"
+        style={{
+          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+          width: '100%', padding: '0.65rem 1rem', borderRadius: 10,
+          background: t.accent, color: '#fff', fontWeight: 600, fontSize: '0.88rem',
+          textDecoration: 'none', boxShadow: '0 4px 14px rgba(45,106,79,0.2)',
+        }}
+      >
+        Take the 7-question quiz <i className="bi bi-arrow-right"></i>
+      </a>
+    </aside>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════
    APP ROOT
    ═══════════════════════════════════════════════════════════ */
 function OssApp() {
@@ -1533,12 +1791,14 @@ function OssApp() {
 
       <OssFeatures t={t} />
       <OssMethod t={t} />
+      <OssQuizTeaser t={t} />
       <OssPrivacy t={t} />
       <OssHosting t={t} />
       <OssQuickstart t={t} />
       <OssCta t={t} />
       <OssFooter t={t} onOpenPrivacy={() => setPrivacyOpen(true)} />
       <PrivacyModal open={privacyOpen} onClose={() => setPrivacyOpen(false)} t={t} />
+      <QuizNudge t={t} />
     </div>
   );
 }
